@@ -1,0 +1,79 @@
+{
+  "decided_at": "2021-06-01",
+  "decided_by": [
+    "bob"
+  ],
+  "id": "D2",
+  "path": {
+    "edges": [
+      {
+        "id": "ADR-021-source-D2",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ADR-021",
+        "target": "D2",
+        "type": "SOURCED_FROM"
+      },
+      {
+        "id": "D2-by-bob",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D2",
+        "target": "bob",
+        "type": "DECIDED_BY"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "ADR-021",
+        "label": "Compatibility module ownership",
+        "meta": null,
+        "status": null,
+        "type": "Doc"
+      },
+      {
+        "id": "D2",
+        "label": "Keep win7 shim in compat module",
+        "meta": null,
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "bob",
+        "label": "bob",
+        "meta": null,
+        "status": null,
+        "type": "Person"
+      }
+    ]
+  },
+  "premises": [
+    {
+      "id": "D5",
+      "status": "live",
+      "title": "Keep polyfill layer"
+    },
+    {
+      "id": "D6",
+      "status": "live",
+      "title": "Ship legacy-compatible bundles"
+    },
+    {
+      "id": "D1",
+      "status": "live",
+      "title": "Support Windows 7 clients"
+    }
+  ],
+  "sources": [
+    {
+      "id": "ADR-021",
+      "tag": "SYNTHETIC",
+      "title": "Compatibility module ownership",
+      "type": "doc",
+      "url": "https://example.invalid/doc/adr-021"
+    }
+  ],
+  "status": "live",
+  "supersedes": [],
+  "title": "Keep win7 shim in compat module"
+}

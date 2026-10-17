@@ -1,0 +1,126 @@
+{
+  "counts": {
+    "orphan_artifact": 1,
+    "stale_governing": 2,
+    "zombie": 1
+  },
+  "findings": [
+    {
+      "explanation": "artifact file:docs/readme.md has no hierarchy or incoming GOVERNS edge; this may be a legitimate root or a data gap.",
+      "ids": [
+        "file:docs/readme.md"
+      ],
+      "path": {
+        "edges": [],
+        "nodes": [
+          {
+            "id": "file:docs/readme.md",
+            "label": "file:docs/readme.md",
+            "meta": null,
+            "status": null,
+            "type": "Artifact"
+          }
+        ]
+      },
+      "type": "orphan_artifact"
+    },
+    {
+      "explanation": "live governing decision D2 produces STALE for module:compat / delete.",
+      "ids": [
+        "D2",
+        "module:compat",
+        "D1"
+      ],
+      "path": {
+        "edges": [],
+        "nodes": [
+          {
+            "id": "D2",
+            "label": "D2",
+            "meta": null,
+            "status": null,
+            "type": "Decision"
+          },
+          {
+            "id": "module:compat",
+            "label": "module:compat",
+            "meta": null,
+            "status": null,
+            "type": "Artifact"
+          },
+          {
+            "id": "D1",
+            "label": "D1",
+            "meta": null,
+            "status": null,
+            "type": "Decision"
+          }
+        ]
+      },
+      "type": "stale_governing"
+    },
+    {
+      "explanation": "live governing decision D2 produces STALE for module:compat / modify.",
+      "ids": [
+        "D2",
+        "module:compat",
+        "D1"
+      ],
+      "path": {
+        "edges": [],
+        "nodes": [
+          {
+            "id": "D2",
+            "label": "D2",
+            "meta": null,
+            "status": null,
+            "type": "Decision"
+          },
+          {
+            "id": "module:compat",
+            "label": "module:compat",
+            "meta": null,
+            "status": null,
+            "type": "Artifact"
+          },
+          {
+            "id": "D1",
+            "label": "D1",
+            "meta": null,
+            "status": null,
+            "type": "Decision"
+          }
+        ]
+      },
+      "type": "stale_governing"
+    },
+    {
+      "explanation": "D6 is marked live but every reachable premise found by the bounded audit is dead.",
+      "ids": [
+        "D6",
+        "D1"
+      ],
+      "path": {
+        "edges": [],
+        "nodes": [
+          {
+            "id": "D6",
+            "label": "D6",
+            "meta": null,
+            "status": null,
+            "type": "Decision"
+          },
+          {
+            "id": "D1",
+            "label": "D1",
+            "meta": null,
+            "status": null,
+            "type": "Decision"
+          }
+        ]
+      },
+      "type": "zombie"
+    }
+  ],
+  "total": 4
+}

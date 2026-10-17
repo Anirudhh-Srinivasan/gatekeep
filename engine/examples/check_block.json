@@ -1,0 +1,50 @@
+{
+  "action": "add_dependency",
+  "answer_id": "",
+  "dead": [],
+  "depth": 6,
+  "info": [],
+  "live": [
+    {
+      "constraint": "prohibits",
+      "decision": "D8",
+      "scope": "package:moment",
+      "severity": "high",
+      "status": "live",
+      "title": "Do not use moment.js"
+    }
+  ],
+  "note": "A live high-severity prohibition covers this action.",
+  "owner": null,
+  "path": {
+    "edges": [
+      {
+        "id": "package:moment-governs-D8",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "package:moment",
+        "target": "D8",
+        "type": "GOVERNS"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "package:moment",
+        "label": "moment",
+        "meta": "package:moment",
+        "status": null,
+        "type": "Artifact"
+      },
+      {
+        "id": "D8",
+        "label": "Do not use moment.js",
+        "meta": "2025-01-15",
+        "status": "live",
+        "type": "Decision"
+      }
+    ]
+  },
+  "stale": [],
+  "target": "package:moment",
+  "verdict": "BLOCK"
+}

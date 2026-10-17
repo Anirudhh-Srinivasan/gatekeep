@@ -1,0 +1,114 @@
+{
+  "action": "delete",
+  "answer_id": "",
+  "dead": [],
+  "depth": 4,
+  "info": [],
+  "live": [],
+  "note": "The reason for this rule expired; confirm with the owner.",
+  "owner": {
+    "people": [
+      "bob"
+    ],
+    "team": "platform"
+  },
+  "path": {
+    "edges": [
+      {
+        "id": "file:compat/win7_shim.js-governs-D2",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "file:compat/win7_shim.js",
+        "target": "D2",
+        "type": "GOVERNS"
+      },
+      {
+        "id": "D2-depends-D5",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D2",
+        "target": "D5",
+        "type": "DEPENDS_ON"
+      },
+      {
+        "id": "D5-depends-D6",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D5",
+        "target": "D6",
+        "type": "DEPENDS_ON"
+      },
+      {
+        "id": "D6-depends-D1",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D6",
+        "target": "D1",
+        "type": "DEPENDS_ON"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "file:compat/win7_shim.js",
+        "label": "compat/win7_shim.js",
+        "meta": "file:compat/win7_shim.js",
+        "status": null,
+        "type": "Artifact"
+      },
+      {
+        "id": "D2",
+        "label": "Keep win7 shim in compat module",
+        "meta": "2021-06-01",
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "D5",
+        "label": "Keep polyfill layer",
+        "meta": "2021-05-01",
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "D6",
+        "label": "Ship legacy-compatible bundles",
+        "meta": "2021-04-01",
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "D1",
+        "label": "Support Windows 7 clients",
+        "meta": "2021-03-01",
+        "status": "superseded",
+        "type": "Decision"
+      }
+    ]
+  },
+  "stale": [
+    {
+      "constraint": "requires_approval",
+      "dead_premises": [
+        {
+          "hops": 3,
+          "id": "D1",
+          "status": "superseded",
+          "title": "Support Windows 7 clients",
+          "via": [
+            "D2",
+            "D5",
+            "D6",
+            "D1"
+          ]
+        }
+      ],
+      "decision": "D2",
+      "scope": "module:compat",
+      "severity": "normal",
+      "status": "live",
+      "title": "Keep win7 shim in compat module"
+    }
+  ],
+  "target": "file:compat/win7_shim.js",
+  "verdict": "STALE"
+}

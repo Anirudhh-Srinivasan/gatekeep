@@ -1,0 +1,25 @@
+{
+  "action": "delete",
+  "answer_id": "",
+  "dead": [],
+  "depth": 6,
+  "info": [],
+  "live": [],
+  "note": "Nothing recorded covers this action; that does not mean safe.",
+  "owner": null,
+  "path": {
+    "edges": [],
+    "nodes": [
+      {
+        "id": "file:docs/readme.md",
+        "label": "docs/readme.md",
+        "meta": "file:docs/readme.md",
+        "status": null,
+        "type": "Artifact"
+      }
+    ]
+  },
+  "stale": [],
+  "target": "file:docs/readme.md",
+  "verdict": "UNGOVERNED"
+}

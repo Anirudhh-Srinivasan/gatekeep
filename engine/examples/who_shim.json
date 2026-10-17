@@ -1,0 +1,54 @@
+{
+  "owners": [
+    {
+      "people": [
+        "bob"
+      ],
+      "team": "platform"
+    }
+  ],
+  "path": {
+    "edges": [
+      {
+        "id": "platform-owns-file:compat/win7_shim.js",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "platform",
+        "target": "file:compat/win7_shim.js",
+        "type": "OWNS"
+      },
+      {
+        "id": "bob-member-platform",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "bob",
+        "target": "platform",
+        "type": "MEMBER_OF"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "file:compat/win7_shim.js",
+        "label": "file:compat/win7_shim.js",
+        "meta": null,
+        "status": null,
+        "type": "Artifact"
+      },
+      {
+        "id": "platform",
+        "label": "platform",
+        "meta": null,
+        "status": null,
+        "type": "Team"
+      },
+      {
+        "id": "bob",
+        "label": "bob",
+        "meta": null,
+        "status": null,
+        "type": "Person"
+      }
+    ]
+  },
+  "target": "file:compat/win7_shim.js"
+}

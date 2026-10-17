@@ -1,0 +1,25 @@
+{
+  "action": "delete",
+  "answer_id": "unknown-file:missing/nope.js",
+  "dead": [],
+  "depth": 6,
+  "info": [],
+  "live": [],
+  "note": "This target does not resolve in the graph. Gatekeeper will not guess.",
+  "owner": null,
+  "path": {
+    "edges": [],
+    "nodes": [
+      {
+        "id": "file:missing/nope.js",
+        "label": "file:missing/nope.js",
+        "meta": null,
+        "status": null,
+        "type": "Artifact"
+      }
+    ]
+  },
+  "stale": [],
+  "target": "file:missing/nope.js",
+  "verdict": "UNKNOWN_TARGET"
+}

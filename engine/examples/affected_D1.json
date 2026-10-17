@@ -1,0 +1,185 @@
+{
+  "decision": "D1",
+  "path": {
+    "edges": [
+      {
+        "id": "D6-depends-D1",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D6",
+        "target": "D1",
+        "type": "DEPENDS_ON"
+      },
+      {
+        "id": "D5-depends-D6",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D5",
+        "target": "D6",
+        "type": "DEPENDS_ON"
+      },
+      {
+        "id": "D2-depends-D5",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "D2",
+        "target": "D5",
+        "type": "DEPENDS_ON"
+      },
+      {
+        "id": "ans-021-used-D1",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-021",
+        "target": "D1",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-021-asked-alice",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-021",
+        "target": "alice",
+        "type": "ASKED_BY"
+      },
+      {
+        "id": "ans-021-used-D2",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-021",
+        "target": "D2",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-021-used-D5",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-021",
+        "target": "D5",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-021-used-D6",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-021",
+        "target": "D6",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-034-used-D1",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-034",
+        "target": "D1",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-034-asked-carol",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-034",
+        "target": "carol",
+        "type": "ASKED_BY"
+      },
+      {
+        "id": "ans-034-used-D2",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-034",
+        "target": "D2",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-034-used-D5",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-034",
+        "target": "D5",
+        "type": "USED_IN"
+      },
+      {
+        "id": "ans-034-used-D6",
+        "label": null,
+        "provenance": "SYNTHETIC",
+        "source": "ans-034",
+        "target": "D6",
+        "type": "USED_IN"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "D1",
+        "label": "Support Windows 7 clients",
+        "meta": null,
+        "status": "superseded",
+        "type": "Decision"
+      },
+      {
+        "id": "D6",
+        "label": "Ship legacy-compatible bundles",
+        "meta": null,
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "D5",
+        "label": "Keep polyfill layer",
+        "meta": null,
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "D2",
+        "label": "Keep win7 shim in compat module",
+        "meta": null,
+        "status": "live",
+        "type": "Decision"
+      },
+      {
+        "id": "ans-021",
+        "label": "ans-021",
+        "meta": "ledger",
+        "status": null,
+        "type": "Answer"
+      },
+      {
+        "id": "alice",
+        "label": "alice",
+        "meta": null,
+        "status": null,
+        "type": "Person"
+      },
+      {
+        "id": "ans-034",
+        "label": "ans-034",
+        "meta": "ledger",
+        "status": null,
+        "type": "Answer"
+      },
+      {
+        "id": "carol",
+        "label": "carol",
+        "meta": null,
+        "status": null,
+        "type": "Person"
+      }
+    ]
+  },
+  "rows": [
+    {
+      "answer_id": "ans-021",
+      "at": "2025-02-03T09:12:00Z",
+      "person": "alice",
+      "stale_decision": "D2",
+      "summary": "Deletion of win7_shim.js needs platform approval."
+    },
+    {
+      "answer_id": "ans-034",
+      "at": "2025-04-18T15:41:00Z",
+      "person": "carol",
+      "stale_decision": "D2",
+      "summary": "Ask platform before removing the Windows 7 shim."
+    }
+  ]
+}

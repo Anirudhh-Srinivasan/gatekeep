@@ -1,0 +1,361 @@
+{
+  "edges": [
+    {
+      "id": "D1-SOURCED_FROM-ADR-017",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D1",
+      "target": "ADR-017",
+      "type": "SOURCED_FROM"
+    },
+    {
+      "id": "D2-DECIDED_BY-bob",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D2",
+      "target": "bob",
+      "type": "DECIDED_BY"
+    },
+    {
+      "id": "D2-DEPENDS_ON-D5",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D2",
+      "target": "D5",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "id": "D2-GOVERNS-module:compat",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D2",
+      "target": "module:compat",
+      "type": "GOVERNS"
+    },
+    {
+      "id": "D2-SOURCED_FROM-ADR-021",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D2",
+      "target": "ADR-021",
+      "type": "SOURCED_FROM"
+    },
+    {
+      "id": "D5-DEPENDS_ON-D6",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D5",
+      "target": "D6",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "id": "D5-SOURCED_FROM-eng-42",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D5",
+      "target": "eng-42",
+      "type": "SOURCED_FROM"
+    },
+    {
+      "id": "D6-DEPENDS_ON-D1",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D6",
+      "target": "D1",
+      "type": "DEPENDS_ON"
+    },
+    {
+      "id": "D6-SOURCED_FROM-PLAT-188",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D6",
+      "target": "PLAT-188",
+      "type": "SOURCED_FROM"
+    },
+    {
+      "id": "D8-DECIDED_BY-bob",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D8",
+      "target": "bob",
+      "type": "DECIDED_BY"
+    },
+    {
+      "id": "D8-GOVERNS-package:moment",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D8",
+      "target": "package:moment",
+      "type": "GOVERNS"
+    },
+    {
+      "id": "D8-SOURCED_FROM-PLAT-441",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "D8",
+      "target": "PLAT-441",
+      "type": "SOURCED_FROM"
+    },
+    {
+      "id": "ans-021-ASKED_BY-alice",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-021",
+      "target": "alice",
+      "type": "ASKED_BY"
+    },
+    {
+      "id": "ans-021-USED_IN-D1",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-021",
+      "target": "D1",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-021-USED_IN-D2",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-021",
+      "target": "D2",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-021-USED_IN-D5",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-021",
+      "target": "D5",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-021-USED_IN-D6",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-021",
+      "target": "D6",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-034-ASKED_BY-carol",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-034",
+      "target": "carol",
+      "type": "ASKED_BY"
+    },
+    {
+      "id": "ans-034-USED_IN-D1",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-034",
+      "target": "D1",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-034-USED_IN-D2",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-034",
+      "target": "D2",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-034-USED_IN-D5",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-034",
+      "target": "D5",
+      "type": "USED_IN"
+    },
+    {
+      "id": "ans-034-USED_IN-D6",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "ans-034",
+      "target": "D6",
+      "type": "USED_IN"
+    },
+    {
+      "id": "bob-MEMBER_OF-platform",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "bob",
+      "target": "platform",
+      "type": "MEMBER_OF"
+    },
+    {
+      "id": "file:compat/win7_shim.js-PART_OF-module:compat",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "file:compat/win7_shim.js",
+      "target": "module:compat",
+      "type": "PART_OF"
+    },
+    {
+      "id": "module:compat-PART_OF-repo:app",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "module:compat",
+      "target": "repo:app",
+      "type": "PART_OF"
+    },
+    {
+      "id": "platform-OWNS-module:compat",
+      "label": null,
+      "provenance": "SYNTHETIC",
+      "source": "platform",
+      "target": "module:compat",
+      "type": "OWNS"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ADR-017",
+      "label": "Browser support policy",
+      "meta": null,
+      "status": null,
+      "type": "Doc"
+    },
+    {
+      "id": "ADR-021",
+      "label": "Compatibility module ownership",
+      "meta": null,
+      "status": null,
+      "type": "Doc"
+    },
+    {
+      "id": "D1",
+      "label": "Support Windows 7 clients",
+      "meta": null,
+      "status": "live",
+      "type": "Decision"
+    },
+    {
+      "id": "D2",
+      "label": "Keep win7 shim in compat module",
+      "meta": null,
+      "status": "live",
+      "type": "Decision"
+    },
+    {
+      "id": "D5",
+      "label": "Keep polyfill layer",
+      "meta": null,
+      "status": "live",
+      "type": "Decision"
+    },
+    {
+      "id": "D6",
+      "label": "Ship legacy-compatible bundles",
+      "meta": null,
+      "status": "live",
+      "type": "Decision"
+    },
+    {
+      "id": "D8",
+      "label": "Do not use moment.js",
+      "meta": null,
+      "status": "live",
+      "type": "Decision"
+    },
+    {
+      "id": "PLAT-188",
+      "label": "Bundle compatibility review",
+      "meta": null,
+      "status": null,
+      "type": "Ticket"
+    },
+    {
+      "id": "PLAT-441",
+      "label": "Remove unmaintained package",
+      "meta": null,
+      "status": null,
+      "type": "Ticket"
+    },
+    {
+      "id": "alice",
+      "label": "alice",
+      "meta": null,
+      "status": null,
+      "type": "Person"
+    },
+    {
+      "id": "ans-021",
+      "label": "ans-021",
+      "meta": "check",
+      "status": null,
+      "type": "Answer"
+    },
+    {
+      "id": "ans-034",
+      "label": "ans-034",
+      "meta": "answer",
+      "status": null,
+      "type": "Answer"
+    },
+    {
+      "id": "bob",
+      "label": "bob",
+      "meta": null,
+      "status": null,
+      "type": "Person"
+    },
+    {
+      "id": "carol",
+      "label": "carol",
+      "meta": null,
+      "status": null,
+      "type": "Person"
+    },
+    {
+      "id": "eng-42",
+      "label": "Polyfill trade-offs",
+      "meta": null,
+      "status": null,
+      "type": "Thread"
+    },
+    {
+      "id": "file:compat/win7_shim.js",
+      "label": "win7_shim.js",
+      "meta": "file",
+      "status": null,
+      "type": "Artifact"
+    },
+    {
+      "id": "file:docs/readme.md",
+      "label": "readme.md",
+      "meta": "file",
+      "status": null,
+      "type": "Artifact"
+    },
+    {
+      "id": "module:compat",
+      "label": "compat",
+      "meta": "module",
+      "status": null,
+      "type": "Artifact"
+    },
+    {
+      "id": "package:moment",
+      "label": "moment",
+      "meta": "package",
+      "status": null,
+      "type": "Artifact"
+    },
+    {
+      "id": "platform",
+      "label": "platform",
+      "meta": null,
+      "status": null,
+      "type": "Team"
+    },
+    {
+      "id": "repo:app",
+      "label": "app",
+      "meta": "repo",
+      "status": null,
+      "type": "Artifact"
+    }
+  ]
+}

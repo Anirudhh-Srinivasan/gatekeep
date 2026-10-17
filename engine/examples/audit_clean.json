@@ -1,0 +1,27 @@
+{
+  "counts": {
+    "orphan_artifact": 1
+  },
+  "findings": [
+    {
+      "explanation": "artifact file:docs/readme.md has no hierarchy or incoming GOVERNS edge; this may be a legitimate root or a data gap.",
+      "ids": [
+        "file:docs/readme.md"
+      ],
+      "path": {
+        "edges": [],
+        "nodes": [
+          {
+            "id": "file:docs/readme.md",
+            "label": "file:docs/readme.md",
+            "meta": null,
+            "status": null,
+            "type": "Artifact"
+          }
+        ]
+      },
+      "type": "orphan_artifact"
+    }
+  ],
+  "total": 1
+}
