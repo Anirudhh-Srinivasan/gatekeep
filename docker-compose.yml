@@ -1,0 +1,13 @@
+services:
+  falkordb:
+    image: falkordb/falkordb:v4.22.1
+    container_name: gatekeep-falkordb
+    restart: unless-stopped
+    ports:
+      - "${FALKORDB_PORT:-6379}:6379"
+      - "${FALKORDB_BROWSER_PORT:-3000}:3000"
+    volumes:
+      - falkordb-data:/data
+
+volumes:
+  falkordb-data:
