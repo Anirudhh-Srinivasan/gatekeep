@@ -35,7 +35,7 @@ a { color: inherit; }
 .kicker { color: var(--accent); font-family: var(--mono); font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
 .hero-deck { margin: 18px 0 0; max-width: 620px; color: var(--muted); font-size: 15px; line-height: 1.55; }
 .hero-deck strong { color: var(--paper); font-weight: 500; }
-.hero-aside { border-top: 1px solid var(--line-strong); padding-top: 13px; }
+.hero-aside { border-top: 0; padding-top: 13px; }
 .aside-label, .section-label { color: var(--quiet); font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
 .aside-copy { margin: 11px 0 0; color: var(--paper); font-size: 13px; line-height: 1.5; }
 .aside-copy span { color: var(--accent); font-family: var(--mono); }
@@ -905,10 +905,10 @@ body::before {
 /* Decorative 3D orange gradient sphere */
 .verdict-sphere-decoration {
   position: absolute;
-  top: -16px;
-  right: -16px;
-  width: 96px;
-  height: 96px;
+  top: 72px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 35%, #FFA06E, #FF6D29 60%, #993A08 100%);
   box-shadow: 0 12px 28px rgba(255, 109, 41, 0.35);
