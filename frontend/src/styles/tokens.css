@@ -1,0 +1,61 @@
+:root {
+  --orange: #FF6D29;
+  --brown: #453027;
+  --ink: #161316;
+  --grey: #BABABA;
+  --white: #FFFFFF;
+
+  --font-sans: "Neue Montreal", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --glass-fill: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.18);
+
+  --verdict-red: #FF7770;
+  --verdict-amber: #F3C969;
+  --verdict-green: #7EC99A;
+  --verdict-neutral: #BABABA;
+
+  /* Compatibility aliases used by existing component styles. */
+  --ink-2: #211b20;
+  --panel: rgba(255, 255, 255, 0.07);
+  --panel-raised: rgba(255, 255, 255, 0.10);
+  --line: rgba(255, 255, 255, 0.14);
+  --line-strong: var(--glass-border);
+  --paper: var(--white);
+  --muted: var(--grey);
+  --quiet: var(--grey);
+  --accent: var(--orange);
+  --block: var(--verdict-red);
+  --escalate: var(--orange);
+  --stale: var(--verdict-amber);
+  --allow: var(--verdict-green);
+  --unknown: var(--verdict-neutral);
+  --display: var(--font-sans);
+  --mono: var(--font-sans);
+
+  /* Extended tokens for light verdict card & aesthetic enhancements */
+  --light-card-bg: #FFFFFF;
+  --light-card-ink: #161316;
+  --light-card-sub: #7A7A7E;
+  --light-card-line: rgba(22, 19, 22, 0.10);
+  --light-card-pill: rgba(22, 19, 22, 0.05);
+  --sphere-gradient: radial-gradient(circle at 35% 35%, #FFA06E, #FF6D29 60%, #993A08 100%);
+  --sphere-shadow: 0 8px 24px rgba(255, 109, 41, 0.35);
+
+  /* High-contrast text-on-light tokens (contrast >= 4.5:1 on #FFFFFF) */
+  --verdict-text-light-red: #B42318;
+  --verdict-text-light-amber: #8A5A00;
+  --verdict-text-light-green: #067647;
+  --verdict-text-light-orange: #C2410C;
+  --verdict-text-light-grey: #5F5F63;
+}
+
+
