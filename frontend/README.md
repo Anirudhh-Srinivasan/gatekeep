@@ -1,62 +1,83 @@
 # Gatekeeper frontend
 
-Gatekeeper is a pre-action checkpoint for people and AI agents. It follows recorded decision premises before answering `BLOCK`, `ESCALATE`, `STALE`, `ALLOW`, `UNGOVERNED`, or `UNKNOWN_TARGET`. This frontend is intentionally **synthetic** and runs without a backend: the default mock API is stateful, so reversing `D1` really changes the next deep check from `ESCALATE` to `STALE`.
+Gatekeeper is a pre-action checkpoint console for people and agents. It follows recorded decision premises before an action and shows the evidence path behind each result. The frontend uses a deterministic, stateful synthetic mock by default.
 
-## Run it
+## What the console includes
+
+- **Checkpoint console:** check a target, action, and trace depth.
+- **Depth contrast:** compare a shallow check with a deeper dependency traversal.
+- **Reverse with dry run:** preview affected verdicts and people before committing a replacement decision.
+- **Affected people ledger:** inspect answers linked to superseded premises.
+- **Why drawer:** inspect a decision’s recorded source, owner, premises, and supersession record.
+- **Graph explorer:** browse the fixture’s artifacts, decisions, people, sources, and relationships.
+- **Agent mode:** send a canned or typed request through a validated tool router. Deterministic API/engine code supplies the verdict; language model text never determines or overrides it.
+
+## Verdicts
+
+| Verdict | Meaning |
+| --- | --- |
+| `BLOCK` | A recorded prohibition covers the action. |
+| `ESCALATE` | A live rule requires an owner or team to approve. |
+| `STALE` | A premise is no longer live; confirm with the owner before acting. |
+| `ALLOW` | A live recorded rule permits the scoped action. |
+| `UNGOVERNED` | No applicable rule is recorded. This is **not safe** and is never presented as a safe result. |
+| `UNKNOWN_TARGET` | The supplied name does not resolve to a recorded artifact. |
+
+Meaning is conveyed with labels, explanatory text, icons/patterns, and border styles, not color alone. The UI displays returned verdicts; it does not decide them.
+
+## Run locally
 
 ```bash
-npm install
-npm run dev
+npm ci
+npm run dev -- --port 5190 --strictPort
 ```
 
-Open the Vite URL printed in the terminal. The useful starting flow is:
+Open <http://localhost:5190>. The ordinary mode defaults to the mock API. `?demo=1` opens the guided recording flow, hides the top bar, and forces mock mode.
 
-1. Run the default `file:compat/win7_shim.js` + `delete` checkpoint.
-2. Drag the depth contrast slider or use depth `1` vs `4`.
-3. Dry-run and commit `D1 → D4` in **Reverse a decision**.
-4. Re-run the check: the deep path is now `STALE`, while the shallow check remains `ESCALATE`.
-5. Try the package prohibition and the ungoverned readme action.
+## Mock and live API settings
 
-The **Play demo** control is deterministic and does not use a network or randomness.
+The frontend reads these Vite variables in `src/api/client.ts`:
 
-## Switching to FastAPI
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `VITE_USE_MOCK` | `true` (mock unless the value is exactly `false`) | Select mock or HTTP API mode. `?demo=1` always forces mock mode. |
+| `VITE_API_URL` | `http://localhost:8000` | Base URL for live API requests. |
+| `VITE_VIEWER` | `anonymous` | Value sent as the `X-Viewer` header. |
+| `VITE_RESET_TOKEN` | unset | Optional `X-Reset-Token` header for reset requests. |
 
-Copy `.env.example` to `.env.local` and set:
+Copy `.env.example` to `.env.local` and set `VITE_USE_MOCK=false` plus `VITE_API_URL` for a local backend. The live adapter calls `/check`, `/why/{decision}`, `/reverse`, `/affected/{decision}`, `/who/{target}`, `/load_bearing`, `/graph`, `/reset`, `/ask`, `/targets`, `/decisions`, and `/audit`. Live mode was not exercised as part of this frontend verification.
 
-```bash
-VITE_USE_MOCK=false
-VITE_API_URL=http://localhost:8000
-```
+## Data and provenance
 
-The UI talks only to `src/api/client.ts`. `src/api/types.ts` is the shared draft contract. The mock implementation lives in `src/api/mockApi.ts`; it is also the fixture used by the Vitest tests.
-
-## API contract
-
-The backend should expose these JSON endpoints. Every check/why/reverse/who response carries an evidence `path` with ordered `nodes` and `edges` where applicable.
-
-| Method | Route | Request | Response |
-| --- | --- | --- | --- |
-| `POST` | `/check` | `{ target, action, depth }` | `CheckResponse`: verdict, owner, live/stale/dead/info decisions, note, `answer_id`, evidence path |
-| `GET` | `/why/{decision}` | — | decision status, date, `sources`, `decided_by`, `supersedes`, premise chain, path |
-| `POST` | `/reverse` | `{ old, new_id, new_title, dry_run }` | flips, affected people/answers, committed flag, path |
-| `GET` | `/affected/{decision}` | — | ledger rows: person, answer id, time, summary, stale decision |
-| `GET` | `/who/{target}` | — | owners via hierarchy and path |
-| `GET` | `/load_bearing?limit=5` | — | ranked `{ id, title, score }` decisions |
-| `GET` | `/graph` | — | whole graph `{ nodes, edges }` |
-| `POST` | `/reset` | — | reseed the demo state |
-| `POST` | `/ask` | `{ question }` | validated tool calls, deterministic check result, one-sentence explanation |
-
-Actions are `delete`, `modify`, `add_dependency`, `remove_dependency`, and `deploy`. Depth is an integer from `1` to `6`. The backend should keep verdict calculation deterministic; agent language must not overrule the verdict or invent names that were not returned by the graph.
+The built-in fixture is synthetic. Provenance badges distinguish `REAL`, `CURATED`, and `SYNTHETIC` records and edges; a badge describes provenance, not truth or permission. The mock API is stateful, so reversing `D1` changes later deep checks and its affected ledger. The ledger’s current implementation requests affected answers for `D1`.
 
 ## Checks
 
 ```bash
-npm run test
+npm test
+npx tsc --noEmit
 npm run build
 ```
 
-The mock tests cover the hero depth flip, dry-run affected people, block, ungoverned, and unknown-target states.
+The Vitest suite contains 4 test files and 19 tests. They run against the mock API and cover client behavior, verdict labels, the stateful reversal/depth flow, block and ungoverned checks, and agent demo routing. There are no automated browser tests.
 
-## Honest boundaries
+## Design
 
-This is an advisory guardrail, not a firewall. “Used” in the ledger means a decision was retrieved for an answer through Gatekeeper; it does not prove what a person did afterward. The fixture is synthetic and labelled as such throughout the interface. Backend work can replace the API implementation without changing the UI contract.
+Palette: `#FF6D29` orange, `#453027` brown, `#161316` ink, `#BABABA` grey, and `#FFFFFF` white. The font stack is Neue Montreal with Helvetica Neue and Arial fallbacks; no font files are bundled.
+
+## Screenshots
+
+No viewport-accurate screenshots are included in this revision. The app was visually inspected in the available Chrome window, but image files could not be saved for the requested exact viewport sizes.
+
+## AI disclosure
+
+Built with AI assistance from Codex and Antigravity; the author reviewed the code.
+
+## Limitations
+
+- Live backend mode was not verified. The checked-in frontend configuration defaults to the mock API.
+- The affected people ledger currently queries `D1` directly.
+- There are no automated browser tests.
+- The design pass was visually observed in Chrome at the available desktop window size; exact 1440×900, 1920×1080, and 390×844 captures and glow pixel-step measurements were not obtained.
+
+This is an advisory prototype, not an enforcement layer. A ledger row records that a decision was retrieved for an answer; it does not prove a later action occurred.
