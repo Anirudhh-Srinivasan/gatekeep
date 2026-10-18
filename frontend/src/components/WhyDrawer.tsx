@@ -26,7 +26,7 @@ export function WhyDrawer({ decision, onClose }: WhyDrawerProps): JSX.Element {
     <AnimatePresence>
       {decision && (
         <>
-          <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
+          <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={reduceMotion ? { duration: .01 } : undefined} onClick={onClose} />
           <motion.aside className="why-drawer" initial={{ x: reduceMotion ? 0 : 480, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: reduceMotion ? 0 : 480, opacity: 0 }} transition={reduceMotion ? { duration: .01 } : { type: 'spring', damping: 28, stiffness: 260 }} aria-label="Decision provenance" aria-modal="true">
             <button type="button" className="drawer-close" onClick={onClose} aria-label="Close why drawer" title="Close why drawer"><X size={19} /></button>
             <div className="drawer-kicker">why this decision exists</div>

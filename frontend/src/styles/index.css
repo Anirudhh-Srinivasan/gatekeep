@@ -217,9 +217,10 @@ a { color: inherit; }
 .agent-prompts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 15px; }
 .prompt-button { border: 1px solid var(--line); background: transparent; color: var(--muted); padding: 7px 9px; font-family: var(--mono); font-size: 10px; }
 .prompt-button:hover { border-color: var(--accent); color: var(--accent); }
-.tool-stream { display: grid; gap: 7px; margin-top: 17px; }
-.tool-call { display: flex; align-items: center; gap: 9px; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--orange) 6%, transparent); padding: 9px 11px; color: var(--muted); font-family: var(--mono); font-size: 10px; }
+.tool-stream { display: grid; min-width: 0; gap: 7px; margin-top: 17px; }
+.tool-call { display: flex; min-width: 0; align-items: center; gap: 9px; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--orange) 6%, transparent); padding: 9px 11px; color: var(--muted); font-family: var(--mono); font-size: 10px; }
 .tool-call code { color: var(--accent); }
+.tool-call span { min-width: 0; overflow-wrap: anywhere; }
 .tool-call .check-icon { margin-left: auto; color: var(--allow); }
 .agent-explanation { margin-top: 15px; border-left: 2px solid var(--allow); padding: 4px 0 4px 12px; color: var(--paper); font-size: 13px; line-height: 1.45; }
 .verified-line { display: flex; align-items: center; gap: 7px; margin-top: 13px; color: var(--allow); font-family: var(--mono); font-size: 10px; }
@@ -280,8 +281,8 @@ a { color: inherit; }
 .api-toast { position: fixed; z-index: 60; right: 24px; bottom: 24px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; max-width: min(520px, calc(100vw - 32px)); border: 1px solid var(--glass-line); border-radius: 10px; background: var(--glass); padding: 13px 15px; color: var(--paper); box-shadow: 0 16px 42px color-mix(in srgb, var(--ink) 35%, transparent); backdrop-filter: blur(18px); font-size: 12px; }
 .api-toast strong { color: var(--block); font: 10px var(--mono); }.api-toast button { border: 0; background: transparent; color: var(--muted); font-size: 18px; }
 @keyframes loading { from { background-position: -80px 0; } to { background-position: 80px 0; } }
-.ripple-flash { animation: rippleFlash .8s ease-out; }
-@keyframes rippleFlash { 0% { box-shadow: inset 0 0 0 0 color-mix(in srgb, var(--orange) 50%, transparent); } 35% { box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--orange) 30%, transparent); } 100% { box-shadow: inset 0 0 0 0 color-mix(in srgb, var(--orange) 0%, transparent); } }
+.ripple-flash::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 5px color-mix(in srgb, var(--orange) 30%, transparent); pointer-events: none; animation: rippleFlash .8s ease-out; }
+@keyframes rippleFlash { 0% { transform: scale(.99); opacity: 0; } 35% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.01); opacity: 0; } }
 
 @media (max-width: 1050px) {
   .topbar-notes { display: none; }
@@ -330,6 +331,9 @@ body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--ink); f
 }
 .hero-intro { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: end; gap: 32px; padding: 20px 0 34px; position: relative; isolation: isolate;
 
+}
+@media (max-width: 1050px) {
+  .hero-intro { grid-template-columns: minmax(0, 1fr); }
 }
 .hero-intro::before {
   position: absolute;
@@ -564,7 +568,7 @@ body::before {
 
 @media (max-width: 1024px) {
   .checkpoint-stage-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -884,7 +888,7 @@ body::before {
   justify-content: space-between;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
   border: 2px solid transparent;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 /* Decorative 3D orange gradient sphere */
@@ -1689,6 +1693,8 @@ body::before {
   gap: 28px;
   align-items: start;
 }
+
+.reverse-preview-col { min-height: 420px; }
 
 @media (max-width: 900px) {
   .reverse-grid-layout {

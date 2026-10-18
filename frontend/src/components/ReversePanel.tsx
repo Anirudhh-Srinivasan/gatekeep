@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, GitBranch, Hash, RotateCcw, Type, Users, AlertCircle, CheckCircle2 } from 'lucide-react';
 import type { GraphNode } from '../api/types';
 import { useGatekeeperStore } from '../store/useGatekeeperStore';
@@ -21,6 +21,17 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
   const [previewedParams, setPreviewedParams] = useState<{ old: string; newId: string; newTitle: string } | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!confirming || reverseInFlight) return;
+    const onKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setConfirming(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [confirming, reverseInFlight]);
 
   // Invalidate preview immediately if any input is altered after dry run
   const isPreviewValid = Boolean(
@@ -65,17 +76,24 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
     }
   };
 
+  const commitLock = useRef(false);
+
   const commit = async (): Promise<void> => {
+    if (commitLock.current || reverseInFlight) return;
     if (!previewedParams) {
       setError('A dry run is required before committing.');
       return;
     }
+    setError(null);
+    commitLock.current = true;
     try {
       await reverse(previewedParams.old, previewedParams.newId, previewedParams.newTitle, false);
       setPreviewedParams(null);
       setConfirming(false);
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Commit failed');
+    } finally {
+      commitLock.current = false;
     }
   };
 
