@@ -1,0 +1,5 @@
+[
+  {"pep": "1", "title": "PEP Purpose and Guidelines", "status": "live", "pep_status": "Active", "kind": "Process", "created": "2000-06-13", "url": "https://peps.python.org/pep-0001/"},
+  {"pep": "8", "title": "Style Guide for Python Code", "status": "live", "pep_status": "Active", "kind": "Standards Track", "created": "2001-07-05", "url": "https://peps.python.org/pep-0008/"},
+  {"pep": "20", "title": "The Zen of Python", "status": "live", "pep_status": "Active", "kind": "Informational", "created": "2004-08-19", "url": "https://peps.python.org/pep-0020/"}
+]

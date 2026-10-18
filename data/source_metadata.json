@@ -1,0 +1,13 @@
+{
+  "source": "python/peps",
+  "source_url": "https://github.com/python/peps",
+  "api_url": "https://api.github.com/repos/python/peps/contents/peps?ref=main",
+  "retrieved_at": "2026-10-18",
+  "verification": {
+    "api_http_status": 200,
+    "raw_http_status": 200,
+    "observed_fields": ["PEP", "Title", "Status", "Type", "Created"],
+    "observed_example": {"PEP": "1", "Title": "PEP Purpose and Guidelines", "Status": "Active", "Type": "Process", "Created": "13-Jun-2000"}
+  },
+  "scope": "Three PEP records selected as a bounded real slice; no synthetic records are included."
+}

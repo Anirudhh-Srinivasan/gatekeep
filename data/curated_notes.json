@@ -1,0 +1,5 @@
+[
+  {"pep": "1", "note": "Curated as the process document that explains how Python enhancement proposals are authored and evaluated."},
+  {"pep": "8", "note": "Curated as a living coding-style reference; the source page is linked, while this graph does not assert repository compliance."},
+  {"pep": "20", "note": "Curated as an informational companion to the process and style records; it is guidance, not an enforcement decision."}
+]
