@@ -94,7 +94,7 @@ export function VerdictCard({ result, onDecisionClick, ripple }: VerdictCardProp
         </div>
 
         {/* Display Typography: Very large verdict word + grey secondary line below */}
-        <div className={`verdict-display-group verdict-border-${result.verdict.toLowerCase()}`}>
+        <div className="verdict-display-group">
           <div id="verdict-title" className={`verdict-display-word ${verdictClass(result.verdict)}`}>
             {result.verdict}
           </div>
