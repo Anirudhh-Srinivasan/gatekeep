@@ -985,6 +985,7 @@ body::before {
 }
 .verdict-light-card.verdict-card-ungoverned {
   border: 2px dotted var(--verdict-text-light-grey);
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 10px, color-mix(in srgb, var(--verdict-text-light-grey) 5%, transparent) 10px, color-mix(in srgb, var(--verdict-text-light-grey) 5%, transparent) 11px);
 }
 .verdict-light-card.verdict-card-unknown_target {
   border: 2px dashed var(--verdict-text-light-grey);
