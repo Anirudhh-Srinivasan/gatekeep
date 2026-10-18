@@ -54,6 +54,7 @@ describe('Gatekeeper stateful mock API', () => {
       ['alice', 'ans-021', 'D2'],
       ['carol', 'ans-034', 'D2'],
     ]);
+    expect(affected.path.nodes.map((node) => node.id)).toContain('D1');
   });
 
   it('Reset: returns the engine response shape and restores the synthetic graph', async () => {
@@ -63,6 +64,22 @@ describe('Gatekeeper stateful mock API', () => {
     expect(result).toMatchObject({ reset: true, path: { nodes: [], edges: [] }, real_counts: null });
     expect(result.fixture_counts.nodes).toBeGreaterThan(0);
     expect(result.fixture_counts.edges).toBeGreaterThan(0);
+    expect((await api.reset()).reset).toBe(true);
     expect((await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 6 })).verdict).toBe('ESCALATE');
+  });
+
+  it('Agent mode: resolves each canned prompt through the mock ask router', async () => {
+    const api = new MockApi();
+    const prompts = [
+      ['Can I delete win7_shim.js?', 'ESCALATE'],
+      ['Can we add moment.js?', 'BLOCK'],
+      ['Can I delete readme.md?', 'UNGOVERNED'],
+      ['What about file:unknown/ghost.ts?', 'UNKNOWN_TARGET'],
+    ] as const;
+    for (const [question, verdict] of prompts) {
+      const response = await api.ask(question);
+      expect(response.tool_calls.length).toBeGreaterThan(0);
+      expect(response.result.verdict).toBe(verdict);
+    }
   });
 });
