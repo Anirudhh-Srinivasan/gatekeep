@@ -335,15 +335,6 @@ body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--ink); f
 @media (max-width: 1050px) {
   .hero-intro { grid-template-columns: minmax(0, 1fr); }
 }
-.hero-intro::before {
-  position: absolute;
-  z-index: -1;
-  inset: -20px -34px 0;
-  background: radial-gradient(ellipse 35rem 20rem at 80% 0%, color-mix(in srgb, var(--orange) 20%, transparent), transparent 72%),
-    radial-gradient(ellipse 35rem 20rem at 10% 25%, color-mix(in srgb, var(--brown) 40%, transparent), transparent 72%);
-  content: '';
-  pointer-events: none;
-}
 .topbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 72px; padding: 0 34px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--ink) 90%, transparent); backdrop-filter: blur(18px); border-color: var(--glass-border);
 
 }
@@ -552,7 +543,6 @@ body::before {
 }
 
 .hero-intro { isolation: auto; scroll-margin-top: 84px; }
-.hero-intro::before { content: none; }
 .topbar {
   width: min(1200px, calc(100% - 32px)); height: 56px; min-height: 56px;
   margin: 12px auto 0; padding: 0 18px; border: 1px solid var(--glass-border);
