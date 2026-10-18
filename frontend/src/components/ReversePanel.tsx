@@ -18,28 +18,61 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
   const [old, setOld] = useState('D1');
   const [newId, setNewId] = useState('D4');
   const [newTitle, setNewTitle] = useState('Drop Windows 7 support');
+  const [previewedParams, setPreviewedParams] = useState<{ old: string; newId: string; newTitle: string } | null>(null);
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const preview = lastReverse && !lastReverse.committed ? lastReverse : null;
+  // Invalidate preview immediately if any input is altered after dry run
+  const isPreviewValid = Boolean(
+    previewedParams !== null &&
+    previewedParams.old === old &&
+    previewedParams.newId === newId &&
+    previewedParams.newTitle === newTitle
+  );
+
+  const preview = isPreviewValid && lastReverse && !lastReverse.committed ? lastReverse : null;
   const committedPeople = lastReverse?.committed ? lastReverse.affected_people.length : null;
+
+  const handleOldChange = (value: string): void => {
+    setOld(value);
+    setPreviewedParams(null);
+    setConfirming(false);
+  };
+
+  const handleNewIdChange = (value: string): void => {
+    setNewId(value);
+    setPreviewedParams(null);
+    setConfirming(false);
+  };
+
+  const handleNewTitleChange = (value: string): void => {
+    setNewTitle(value);
+    setPreviewedParams(null);
+    setConfirming(false);
+  };
 
   const runDry = async (): Promise<void> => {
     setError(null);
-    if (!old || !newId || !newTitle) {
+    if (!old.trim() || !newId.trim() || !newTitle.trim()) {
       setError('Fill every field before previewing the reversal.');
       return;
     }
     try {
-      await reverse(old, newId, newTitle, true);
+      await reverse(old.trim(), newId.trim(), newTitle.trim(), true);
+      setPreviewedParams({ old: old.trim(), newId: newId.trim(), newTitle: newTitle.trim() });
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Preview failed');
     }
   };
 
   const commit = async (): Promise<void> => {
+    if (!previewedParams) {
+      setError('A dry run is required before committing.');
+      return;
+    }
     try {
-      await reverse(old, newId, newTitle, false);
+      await reverse(previewedParams.old, previewedParams.newId, previewedParams.newTitle, false);
+      setPreviewedParams(null);
       setConfirming(false);
     } catch (reason: unknown) {
       setError(reason instanceof Error ? reason.message : 'Commit failed');
@@ -82,7 +115,7 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
                 id="decision-select"
                 className="pill-input pill-select"
                 value={old}
-                onChange={(event) => setOld(event.target.value)}
+                onChange={(event) => handleOldChange(event.target.value)}
                 aria-label="Select decision being replaced"
               >
                 {decisions.map((node) => (
@@ -106,7 +139,7 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
                 id="new-id-input"
                 className="pill-input"
                 value={newId}
-                onChange={(event) => setNewId(event.target.value)}
+                onChange={(event) => handleNewIdChange(event.target.value)}
                 aria-label="New decision identifier"
                 placeholder="e.g. D4"
               />
@@ -125,7 +158,7 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
                 id="new-title-input"
                 className="pill-input"
                 value={newTitle}
-                onChange={(event) => setNewTitle(event.target.value)}
+                onChange={(event) => handleNewTitleChange(event.target.value)}
                 aria-label="New decision title"
                 placeholder="e.g. Drop Windows 7 support"
               />
@@ -186,7 +219,7 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
             <div className="dry-run-card" aria-label="Dry run results">
               <div className="dry-run-header">
                 <h3>Dry Run · No changes written yet</h3>
-                <span className="dry-run-tag">Simulated</span>
+                <span className="dry-run-tag">Simulated ({previewedParams?.old} → {previewedParams?.newId})</span>
               </div>
 
               {preview.flips.length === 0 ? (
@@ -235,12 +268,13 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
                 )}
               </div>
 
-              {/* Commit Trigger Button (Only enabled after dry-run) */}
+              {/* Commit Trigger Button (Only enabled when preview matches inputs) */}
               {!confirming ? (
                 <button
                   type="button"
                   className="primary-join-button commit-trigger-button"
                   onClick={() => setConfirming(true)}
+                  disabled={!isPreviewValid || reverseInFlight}
                   aria-label="Proceed to commit reversal"
                 >
                   <span className="join-label">Continue to commit</span>
@@ -252,14 +286,14 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
                 <div className="commit-confirmation-box" role="dialog" aria-labelledby="confirm-heading">
                   <h4 id="confirm-heading">Confirm Reversal</h4>
                   <p>
-                    This will write <strong>{newId}</strong> to the recorded graph, mark <strong>{old}</strong> superseded, and update dependent verdicts. Continue?
+                    This will write <strong>{previewedParams?.newId}</strong> to the recorded graph, mark <strong>{previewedParams?.old}</strong> superseded, and update dependent verdicts. Continue?
                   </p>
                   <div className="confirm-btn-row">
                     <button
                       type="button"
                       className="primary-join-button"
                       onClick={() => void commit()}
-                      disabled={reverseInFlight}
+                      disabled={reverseInFlight || !isPreviewValid}
                     >
                       <span className="join-label">
                         {reverseInFlight ? 'Committing…' : 'Commit reversal'}

@@ -728,7 +728,7 @@ body::before {
 
 .action-pill.is-selected {
   background: var(--orange);
-  color: #161316 !important; /* Never white text on orange */
+  color: #161316; /* Never white text on orange */
   border-color: var(--orange);
   font-weight: 600;
   box-shadow: 0 4px 14px rgba(255, 109, 41, 0.35);
@@ -780,7 +780,7 @@ body::before {
 
 .depth-pill.is-selected {
   background: var(--orange);
-  color: #161316 !important; /* Never white text on orange */
+  color: #161316; /* Never white text on orange */
   border-color: var(--orange);
   font-weight: 600;
 }
@@ -970,25 +970,47 @@ body::before {
   font-weight: 400;
 }
 
-/* Distinct Verdict Borders & Icons (Intuitiveness Rules) */
+/* Distinct Verdict Borders & Icons (Intuitiveness Rules - No !important, brand borders) */
 .verdict-light-card.verdict-card-block {
-  border: 2px solid #EF4444 !important;
+  border: 2px solid var(--verdict-red);
 }
 .verdict-light-card.verdict-card-escalate {
-  border: 2px solid #FF6D29 !important;
+  border: 2px solid var(--orange);
 }
 .verdict-light-card.verdict-card-stale {
-  border: 2px dashed #F59E0B !important;
+  border: 2px dashed var(--verdict-amber);
 }
 .verdict-light-card.verdict-card-allow {
-  border: 2px solid #10B981 !important;
+  border: 2px solid var(--verdict-green);
 }
 .verdict-light-card.verdict-card-ungoverned {
-  border: 2px dotted #8E8E93 !important;
+  border: 2px dotted var(--verdict-text-light-grey);
 }
 .verdict-light-card.verdict-card-unknown_target {
-  border: 2px dashed #8E8E93 !important;
+  border: 2px dashed var(--verdict-text-light-grey);
 }
+
+/* High-contrast text-on-light tokens for white card (contrast >= 4.5:1) */
+.verdict-light-card .verdict-display-word.verdict-block { color: var(--verdict-text-light-red); }
+.verdict-light-card .verdict-display-word.verdict-escalate { color: var(--verdict-text-light-orange); }
+.verdict-light-card .verdict-display-word.verdict-stale { color: var(--verdict-text-light-amber); }
+.verdict-light-card .verdict-display-word.verdict-allow { color: var(--verdict-text-light-green); }
+.verdict-light-card .verdict-display-word.verdict-ungoverned,
+.verdict-light-card .verdict-display-word.verdict-unknown { color: var(--verdict-text-light-grey); }
+
+.verdict-light-card .verdict-display-subline { color: var(--verdict-text-light-grey); }
+.verdict-light-card .verdict-kicker-tag { color: var(--verdict-text-light-grey); }
+.verdict-light-card .verdict-answer-id,
+.verdict-light-card .verdict-timestamp-stub { color: var(--verdict-text-light-grey); }
+.verdict-light-card .verdict-note-text { color: var(--verdict-text-light-grey); }
+.verdict-light-card .evidence-heading-text { color: var(--verdict-text-light-grey); }
+.verdict-light-card .evidence-depth-tag { color: var(--verdict-text-light-grey); }
+.verdict-light-card .provenance-legend-bar { color: var(--verdict-text-light-grey); }
+.verdict-light-card .vertical-step-connector { color: var(--verdict-text-light-grey); }
+.verdict-light-card .vertical-node-type-badge { color: var(--verdict-text-light-grey); }
+.verdict-light-card .vertical-node-label-desc { color: var(--verdict-text-light-grey); }
+.verdict-light-card .meta-pill-chip { color: var(--verdict-text-light-grey); }
+.verdict-light-card .verdict-empty-deck { color: var(--verdict-text-light-grey); }
 
 /* Body explanation & notes */
 .verdict-body-explanation {
@@ -1953,9 +1975,6 @@ body::before {
 /* ==========================================================================
    SCREEN 4: Ledger Panel (Dark Rounded Card Reference Style)
    ========================================================================== */
-.ledger-panel-card {
-  margin-top: var(--space-4);
-}
 
 .dark-card-action-btn {
   display: inline-flex;

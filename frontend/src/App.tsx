@@ -42,7 +42,7 @@ function OwnerPanel(): JSX.Element {
 }
 
 function App(): JSX.Element {
-  const { result, graph, loadBearing, ripple, isLoadingGraph, refreshGraph, reset } = useGatekeeperStore();
+  const { result, graph, loadBearing, ripple, isLoadingGraph, refreshGraph, runContrast, reset } = useGatekeeperStore();
   const [drawerDecision, setDrawerDecision] = useState<string | null>(null);
   const recording = new URLSearchParams(window.location.search).get('demo') === '1';
   const [toast, setToast] = useState<ApiError | null>(null);
@@ -56,10 +56,11 @@ function App(): JSX.Element {
     setDrawerDecision((current) => current === decision ? null : decision);
   }, []);
 
-  // Fetch graph on mount; leave result empty until user initiates first check (or guided demo triggers it)
+  // Initial fetch for graph and contrast so hero scenarios are populated on load
   useEffect(() => {
     void refreshGraph().catch(() => undefined);
-  }, [refreshGraph]);
+    void runContrast().catch(() => undefined);
+  }, [refreshGraph, runContrast]);
 
   return (
     <div className={`app-shell ${recording ? 'recording-shell' : ''}`}>

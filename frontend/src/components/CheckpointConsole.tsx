@@ -8,7 +8,7 @@ const prettyAction = (action: Action): string => action.replace('_', ' ');
 
 const DEPTH_OPTIONS = [
   { value: 1, label: '1 · Shallow' },
-  { value: 3, label: '3 hops' },
+  { value: 4, label: '4 hops' },
   { value: 6, label: '6 · Full path' },
 ];
 
@@ -93,6 +93,7 @@ export function CheckpointConsole(): JSX.Element {
               onChange={(event) => setTarget(event.target.value)}
               onFocus={() => setFocused(true)}
               onBlur={() => window.setTimeout(() => setFocused(false), 160)}
+              onKeyDown={(e) => { if (e.key === 'Enter') void runContrast(depth).catch(() => undefined); }}
               placeholder="e.g. file:compat/win7_shim.js"
               aria-autocomplete="list"
               aria-label="Target artifact name"

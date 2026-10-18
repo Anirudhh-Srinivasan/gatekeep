@@ -27,7 +27,7 @@ function DepthSide({ label, depth, result }: DepthSideProps): JSX.Element {
     );
   }
 
-  const deadPremise = result.stale[0]?.dead_premises[0];
+  const deadPremise = result.stale?.[0]?.dead_premises?.[0];
   const borderClass = `verdict-border-${result.verdict.toLowerCase()}`;
 
   return (
@@ -37,7 +37,9 @@ function DepthSide({ label, depth, result }: DepthSideProps): JSX.Element {
     >
       <div className="contrast-card-header">
         <span className="contrast-card-label">{label}</span>
-        <span className="contrast-card-depth">Depth {depth} {depth === 1 ? '· Shallow' : '· Full graph'}</span>
+        <span className="contrast-card-depth">
+          Depth {result.depth} {result.depth === 1 ? '· Shallow' : '· Full graph'}
+        </span>
       </div>
 
       <div className="contrast-verdict-row">
@@ -51,16 +53,17 @@ function DepthSide({ label, depth, result }: DepthSideProps): JSX.Element {
 
       <p className="contrast-reason-copy">{verdictReason(result)}</p>
 
-      {deadPremise && (
+      {deadPremise?.id && (
         <div className="dead-premise-chip" role="status">
           <Clock3 size={14} aria-hidden="true" />
           <span>
-            Dead premise: <strong>{deadPremise.id}</strong> (hop {deadPremise.hops})
+            Dead premise: <strong>{deadPremise.id}</strong>
+            {typeof deadPremise.hops === 'number' && ` (hop ${deadPremise.hops})`}
           </span>
         </div>
       )}
 
-      {result.path.edges.length > 0 && (
+      {result.path?.edges?.length > 0 && (
         <div className="contrast-edge-provenance">
           <span className="provenance-label">Path edges:</span>
           <div className="provenance-badges-inline">
@@ -76,20 +79,50 @@ function DepthSide({ label, depth, result }: DepthSideProps): JSX.Element {
   );
 }
 
-export function DepthContrast(): JSX.Element {
-  const { depth, setDepth, shallowResult, fullResult, runContrast, isChecking, checkError } = useGatekeeperStore();
+// Internal props: testShallow and testFull exist solely for automated vitest unit testing.
+// In production usage, DepthContrast is rendered without arguments and consumes state from useGatekeeperStore.
+interface DepthContrastProps {
+  testShallow?: CheckResponse | null;
+  testFull?: CheckResponse | null;
+}
+
+export function DepthContrast({ testShallow, testFull }: DepthContrastProps = {}): JSX.Element {
+  const store = useGatekeeperStore();
+  const shallowResult = testShallow !== undefined ? testShallow : store.shallowResult;
+  const fullResult = testFull !== undefined ? testFull : store.fullResult;
+  const { depth, setDepth, runContrast, isChecking, checkError } = store;
   const [sliderValue, setSliderValue] = useState(depth);
 
   useEffect(() => setSliderValue(depth), [depth]);
 
-  const hasFlip = shallowResult && fullResult && shallowResult.verdict !== fullResult.verdict;
-  const deadPremiseId = fullResult?.stale[0]?.dead_premises[0]?.id ?? 'D1';
+  const hasFlip = Boolean(shallowResult && fullResult && shallowResult.verdict !== fullResult.verdict);
+  const deadPremise = fullResult?.stale?.[0]?.dead_premises?.[0];
 
   const handleChange = (value: number): void => {
     setSliderValue(value);
     setDepth(value);
-    void runContrast(value);
+    void runContrast(value).catch(() => undefined);
   };
+
+  const getFlipExplanation = (): string => {
+    if (!shallowResult || !fullResult) return '';
+    if (deadPremise?.id) {
+      const hopInfo = typeof deadPremise.hops === 'number' ? ` at hop ${deadPremise.hops}` : '';
+      return `Premise ${deadPremise.id} was invalidated${hopInfo}. Shallow checks miss this deeper dependency.`;
+    }
+    if (fullResult.verdict === 'STALE') {
+      return 'A recorded premise in the full dependency chain is no longer live, inverting the verdict from live to stale.';
+    }
+    if (fullResult.verdict === 'BLOCK') {
+      return 'A deeper traversal uncovered a high-severity prohibition blocking this action.';
+    }
+    if (fullResult.verdict === 'UNGOVERNED') {
+      return 'The full path revealed that no recorded governance covers this action.';
+    }
+    return `Depth traversal changed the verdict from ${shallowResult.verdict} to ${fullResult.verdict}.`;
+  };
+
+  const queriedFullDepth = fullResult?.depth ?? Math.max(4, sliderValue);
 
   return (
     <section className="panel depth-contrast-panel" aria-labelledby="depth-title">
@@ -163,12 +196,20 @@ export function DepthContrast(): JSX.Element {
 
         {/* Side-by-side cards: Depth 1 vs Full depth */}
         <div className="contrast-side-by-side" aria-label="Depth comparison side by side">
-          <DepthSide label="Depth 1 (Shallow)" depth={1} result={shallowResult} />
-          <DepthSide label="Full depth (Traversed)" depth={Math.max(4, depth)} result={fullResult} />
+          <DepthSide
+            label="Depth 1 (Shallow)"
+            depth={shallowResult?.depth ?? 1}
+            result={shallowResult}
+          />
+          <DepthSide
+            label="Full depth (Traversed)"
+            depth={queriedFullDepth}
+            result={fullResult}
+          />
         </div>
 
         {/* Labelled Flip Banner: Readable with the sound off */}
-        {hasFlip && (
+        {hasFlip && shallowResult && fullResult && (
           <div className="depth-flip-banner" aria-live="polite">
             <div className="flip-banner-badge">
               <ArrowRightLeft size={16} aria-hidden="true" />
@@ -182,13 +223,13 @@ export function DepthContrast(): JSX.Element {
               <span className="flip-tag flip-to">
                 Full depth: {fullResult.verdict}
               </span>
-              <span className="flip-cause">
-                because {deadPremiseId} was reversed
-              </span>
+              {deadPremise?.id && (
+                <span className="flip-cause">
+                  because {deadPremise.id} was reversed
+                </span>
+              )}
             </div>
-            <p className="flip-explanation-copy">
-              At Depth 1 the policy looked live. Traversing to hop {fullResult.stale[0]?.dead_premises[0]?.hops ?? 4} revealed premise {deadPremiseId} is no longer live, inverting the verdict to STALE.
-            </p>
+            <p className="flip-explanation-copy">{getFlipExplanation()}</p>
           </div>
         )}
 

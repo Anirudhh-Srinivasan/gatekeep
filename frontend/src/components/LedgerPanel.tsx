@@ -7,6 +7,18 @@ interface LedgerPanelProps {
   refreshKey: number;
 }
 
+const formatDate = (val: string | number | undefined): string => {
+  if (!val) return '—';
+  const d = new Date(val);
+  return Number.isNaN(d.getTime())
+    ? String(val)
+    : d.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+};
+
 export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
   const [response, setResponse] = useState<AffectedResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +52,7 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
             <span>Ledger of Affected People</span>
           </h2>
           <p className="card-deck">
-            When a premise dies, Gatekeeper traces who received verdicts derived from it so they can be notified proactively.
+            When a premise dies, Gatekeeper traces who received verdicts derived from it so teams can review downstream impact. Advisory only.
           </p>
         </div>
         <div className="card-header-action">
@@ -84,7 +96,7 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
                     <th scope="col">Person</th>
                     <th scope="col">Answer / Timestamp</th>
                     <th scope="col">Action Summary</th>
-                    <th scope="col">Supervened Premise</th>
+                    <th scope="col">Stale decision</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -95,21 +107,13 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
                           <span className="person-avatar-circle" aria-hidden="true">
                             {row.person.slice(0, 2).toUpperCase()}
                           </span>
-                          <div className="person-details">
-                            <strong className="person-name-text">{row.person}</strong>
-                            <code className="person-answer-code">{row.answer_id}</code>
-                          </div>
+                          <span className="person-name-text">{row.person}</span>
                         </div>
                       </td>
                       <td>
                         <div className="ledger-time-cell">
-                          <span className="timestamp-label">
-                            {new Date(row.at).toLocaleDateString('en-GB', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })}
-                          </span>
+                          <code className="person-answer-code">{row.answer_id}</code>
+                          <span className="timestamp-label">{formatDate(row.at)}</span>
                         </div>
                       </td>
                       <td>
