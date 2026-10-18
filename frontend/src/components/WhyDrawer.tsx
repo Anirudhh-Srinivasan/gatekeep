@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ExternalLink, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '../api/client';
@@ -7,13 +7,14 @@ import type { WhyResponse } from '../api/types';
 interface WhyDrawerProps { decision: string | null; onClose: () => void; }
 
 export function WhyDrawer({ decision, onClose }: WhyDrawerProps): JSX.Element {
+  const reduceMotion = useReducedMotion();
   const [data, setData] = useState<WhyResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const load = (): void => { if (!decision) return; setLoading(true); setData(null); setError(null); void api.why(decision).then(setData).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : 'Could not load provenance')).finally(() => setLoading(false)); };
   useEffect(() => {
     if (!decision) return;
-    setData(null);
-    setError(null);
-    void api.why(decision).then(setData).catch((reason: unknown) => setError(reason instanceof Error ? reason.message : 'Could not load provenance'));
+    load();
   }, [decision]);
   useEffect(() => {
     if (!decision) return;
@@ -26,11 +27,12 @@ export function WhyDrawer({ decision, onClose }: WhyDrawerProps): JSX.Element {
       {decision && (
         <>
           <motion.div className="drawer-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} />
-          <motion.aside className="why-drawer" initial={{ x: 480 }} animate={{ x: 0 }} exit={{ x: 480 }} transition={{ type: 'spring', damping: 28, stiffness: 260 }} aria-label="Decision provenance" aria-modal="true">
-            <button type="button" className="drawer-close" onClick={onClose} aria-label="Close why drawer"><X size={19} /></button>
+          <motion.aside className="why-drawer" initial={{ x: reduceMotion ? 0 : 480, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: reduceMotion ? 0 : 480, opacity: 0 }} transition={reduceMotion ? { duration: .01 } : { type: 'spring', damping: 28, stiffness: 260 }} aria-label="Decision provenance" aria-modal="true">
+            <button type="button" className="drawer-close" onClick={onClose} aria-label="Close why drawer" title="Close why drawer"><X size={19} /></button>
             <div className="drawer-kicker">why this decision exists</div>
-            {error && <div className="error-state" style={{ marginTop: 22 }}>{error}</div>}
-            {!data && !error && <div className="empty-state" style={{ marginTop: 22 }}>Following the recorded links…</div>}
+            {error && <div className="error-state" style={{ marginTop: 22 }}>{error}<button className="retry-button" type="button" onClick={load}>Retry</button></div>}
+            {loading && <div className="skeleton-stack" style={{ marginTop: 22 }} aria-label="Loading provenance"><i /><i /><i /></div>}
+            {!loading && !data && !error && <div className="empty-state" style={{ marginTop: 22 }}>No provenance is available for this decision.</div>}
             {data && (
               <>
                 <h2 className="drawer-title">{data.title}</h2>

@@ -187,6 +187,15 @@ export interface GraphResponse {
   edges: GraphEdge[];
 }
 
+export interface ResetResponse {
+  reset: boolean;
+  path: EvidencePath;
+  fixture_counts: Record<string, number>;
+  real_counts?: Record<string, unknown> | null;
+  error?: string | null;
+  info?: string | null;
+}
+
 export interface AgentToolCall {
   tool: string;
   args: Record<string, string | number | boolean>;
@@ -203,6 +212,10 @@ export interface AskResponse {
   source?: 'router' | 'llm';
 }
 
+export interface TargetItem { id: string; label?: string; kind?: string; }
+export interface DecisionItem { id: string; title?: string; status?: DecisionStatus; }
+export interface AuditResponse { [key: string]: unknown; }
+
 export interface GatekeeperApi {
   check(request: CheckRequest): Promise<CheckResponse>;
   why(decision: string): Promise<WhyResponse>;
@@ -211,8 +224,11 @@ export interface GatekeeperApi {
   who(target: string): Promise<WhoResponse>;
   loadBearing(limit?: number): Promise<LoadBearingItem[]>;
   graph(): Promise<GraphResponse>;
-  reset(): Promise<void>;
+  reset(): Promise<ResetResponse>;
   ask(question: string): Promise<AskResponse>;
+  targets?(): Promise<TargetItem[]>;
+  decisions?(): Promise<DecisionItem[]>;
+  audit?(): Promise<AuditResponse>;
 }
 
 export const isAction = (value: string): value is Action =>
