@@ -201,6 +201,10 @@ export interface AskResponse {
   names_verified: boolean;
 }
 
+export interface TargetItem { id: string; label?: string; kind?: string; }
+export interface DecisionItem { id: string; title?: string; status?: DecisionStatus; }
+export interface AuditResponse { [key: string]: unknown; }
+
 export interface GatekeeperApi {
   check(request: CheckRequest): Promise<CheckResponse>;
   why(decision: string): Promise<WhyResponse>;
@@ -211,6 +215,9 @@ export interface GatekeeperApi {
   graph(): Promise<GraphResponse>;
   reset(): Promise<void>;
   ask(question: string): Promise<AskResponse>;
+  targets?(): Promise<TargetItem[]>;
+  decisions?(): Promise<DecisionItem[]>;
+  audit?(): Promise<AuditResponse>;
 }
 
 export const isAction = (value: string): value is Action =>

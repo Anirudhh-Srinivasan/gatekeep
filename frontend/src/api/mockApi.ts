@@ -66,7 +66,7 @@ const cleanAction = (action: Action): string => action.replace('_', ' ');
 const pathEdge = (id: string, sourceId: string, targetId: string, type: string): PathEdge => ({ id, source: sourceId, target: targetId, type, provenance: 'SYNTHETIC' });
 
 export class MockApi implements GatekeeperApi {
-  private decisions = new Map<string, DecisionRecord>();
+  private decisionRecords = new Map<string, DecisionRecord>();
   private artifacts = new Map<string, ArtifactRecord>();
   private ledger: LedgerRecord[] = [];
   private answerSequence = 100;
@@ -76,7 +76,7 @@ export class MockApi implements GatekeeperApi {
   }
 
   private seed(): void {
-    this.decisions = new Map([
+    this.decisionRecords = new Map([
       ['D1', {
         id: 'D1', title: 'Support Windows 7 clients', status: 'live', decided_at: '2021-03-01',
         depends_on: [], decided_by: ['platform'], sources: [source('doc', 'ADR-017', 'Browser support policy')], supersedes: [],
@@ -123,7 +123,7 @@ export class MockApi implements GatekeeperApi {
   }
 
   private record(id: string): DecisionRecord {
-    const decision = this.decisions.get(id);
+    const decision = this.decisionRecords.get(id);
     if (!decision) throw new Error(`Decision ${id} is not in the graph`);
     return decision;
   }
@@ -229,7 +229,7 @@ export class MockApi implements GatekeeperApi {
     }
 
     const scopes = this.artifactScopes(target.id);
-    const allGovernance = [...this.decisions.values()].filter((decision) => decision.scope && scopes.includes(decision.scope));
+    const allGovernance = [...this.decisionRecords.values()].filter((decision) => decision.scope && scopes.includes(decision.scope));
     const applicable = allGovernance.filter((decision) => {
       const actions = decision.actions ?? [];
       return actions.includes('*') || actions.includes(request.action);
@@ -354,7 +354,7 @@ export class MockApi implements GatekeeperApi {
     const flips = before.verdict !== afterVerdict ? [{ target: 'file:compat/win7_shim.js', action: 'delete' as const, decision: 'D2', from_verdict: before.verdict, to_verdict: afterVerdict, path: this.pathFor('file:compat/win7_shim.js', ['D2'], 6) }] : [];
     if (!request.dry_run) {
       old.status = 'superseded';
-      this.decisions.set(request.new_id, {
+      this.decisionRecords.set(request.new_id, {
         id: request.new_id,
         title: request.new_title,
         status: 'live',
@@ -408,7 +408,7 @@ export class MockApi implements GatekeeperApi {
       { id: 'D2', title: 'Keep win7 shim in compat module', score: 0.49 },
       { id: 'D8', title: 'Do not use moment.js', score: 0.18 },
     ];
-    return scores.filter((item) => this.decisions.has(item.id)).slice(0, limit);
+    return scores.filter((item) => this.decisionRecords.has(item.id)).slice(0, limit);
   }
 
   graph(): Promise<GraphResponse> {
@@ -422,7 +422,7 @@ export class MockApi implements GatekeeperApi {
       { id: 'file:compat/win7_shim.js', type: 'Artifact', label: 'win7_shim.js', meta: 'file', x: 420, y: 360 },
       { id: 'file:docs/readme.md', type: 'Artifact', label: 'readme.md', meta: 'file', x: 420, y: 500 },
       { id: 'package:moment', type: 'Artifact', label: 'package:moment', meta: 'package', x: 420, y: 640 },
-      ...[...this.decisions.values()].map((decision, index) => ({
+      ...[...this.decisionRecords.values()].map((decision, index) => ({
         id: decision.id, type: 'Decision' as const, label: decision.title, status: decision.status,
         meta: decision.decided_at, x: 710, y: 60 + index * 130,
       })),
@@ -456,7 +456,7 @@ export class MockApi implements GatekeeperApi {
       { id: 'ans21-d2', source: 'ans-021', target: 'D2', type: 'USED_IN' },
       { id: 'ans34-d2', source: 'ans-034', target: 'D2', type: 'USED_IN' },
     ];
-    for (const decision of this.decisions.values()) {
+    for (const decision of this.decisionRecords.values()) {
       if (decision.supersedes[0]) edges.push({ id: `${decision.id}-supersedes-${decision.supersedes[0]}`, source: decision.id, target: decision.supersedes[0], type: 'SUPERSEDES' });
     }
     return Promise.resolve({ nodes, edges: edges.map((edge) => ({ ...edge, provenance: 'SYNTHETIC' as const })) });

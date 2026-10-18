@@ -1,9 +1,9 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import type { CheckResponse } from '../api/types';
-import { EvidencePath } from './EvidencePath';
 import { verdictClass, verdictPatternClass, verdictReason } from './verdictText';
 import { VerdictMark } from './VerdictMark';
+import { useGatekeeperStore } from '../store/useGatekeeperStore';
 
 interface VerdictCardProps {
   result: CheckResponse | null;
@@ -11,10 +11,13 @@ interface VerdictCardProps {
   ripple: number;
 }
 
+const edgeLabel = (type: string): string => type.replaceAll('_', ' ').toLowerCase();
+
 export function VerdictCard({ result, onDecisionClick, ripple }: VerdictCardProps): JSX.Element {
   const reduceMotion = useReducedMotion();
+  const { isChecking, checkError, runCheck } = useGatekeeperStore();
   if (!result) {
-    return <section className="panel verdict-panel"><div className="panel-body empty-state">Run a checkpoint to return a verdict and its evidence path. The graph is waiting.</div></section>;
+    return <section className="panel verdict-panel"><div className="panel-body">{isChecking ? <div className="skeleton-stack" aria-label="Loading verdict"><i /><i /><i /></div> : checkError ? <div className="error-state">{checkError}<button className="retry-button" type="button" onClick={() => void runCheck().catch(() => undefined)}>Retry</button></div> : <div className="empty-state">Run a checkpoint to return a verdict and its evidence path. The graph is waiting.</div>}</div></section>;
   }
   const owner = result.owner;
   return (
@@ -33,7 +36,20 @@ export function VerdictCard({ result, onDecisionClick, ripple }: VerdictCardProp
           <span className="meta-chip">depth <strong>{result.depth} · {result.depth === 1 ? 'shallow' : 'full path'}</strong></span>
           {owner && <span className="meta-chip">owner <strong>{owner.team} / {owner.people.join(', ')}</strong> <ArrowUpRight size={12} aria-hidden="true" /></span>}
         </div>
-        <EvidencePath result={result} onDecisionClick={onDecisionClick} />
+        <div className="evidence-wrap">
+          <div className="evidence-title"><h3>Evidence path · returned with answer</h3><span>{result.depth === 1 ? 'depth 1' : `full depth ${result.depth}`}</span></div>
+          {result.path.nodes.length === 0 ? <div className="evidence-empty">No evidence path returned.</div> : <div className="vertical-evidence" aria-label="Evidence path, top to bottom">
+            {result.path.nodes.map((node, index) => {
+              const edge = index > 0 ? result.path.edges.find((candidate) => candidate.source === result.path.nodes[index - 1].id && candidate.target === node.id) : undefined;
+              const card = <><span className="vertical-node-type">{node.type}</span><strong>{node.id}</strong><span className="vertical-node-label">{node.label}</span></>;
+              return <div className="vertical-evidence-item" key={`${node.id}-${index}`}>
+                {index > 0 && <div className="vertical-evidence-edge"><span className="vertical-edge-line" aria-hidden="true" /><span className="vertical-edge-label">{edge ? edgeLabel(edge.label ?? edge.type) : 'continues to'}</span><span className={`provenance-badge is-${(edge?.provenance ?? 'SYNTHETIC').toLowerCase()}`}>{edge?.provenance ?? 'SYNTHETIC'}</span></div>}
+                {node.type === 'Decision' ? <button type="button" className="vertical-evidence-node is-decision" onClick={() => onDecisionClick(node.id)}>{card}</button> : <div className={`vertical-evidence-node is-${node.type.toLowerCase()}`}>{card}</div>}
+              </div>;
+            })}
+          </div>}
+          <div className="provenance-legend" aria-label="Evidence provenance legend"><span>Edge provenance</span><i className="provenance-badge is-real">REAL</i><i className="provenance-badge is-curated">CURATED</i><i className="provenance-badge is-synthetic">SYNTHETIC</i></div>
+        </div>
       </div>
     </motion.section>
   );

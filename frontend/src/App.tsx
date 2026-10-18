@@ -12,6 +12,7 @@ import { TopBar } from './components/TopBar';
 import { VerdictCard } from './components/VerdictCard';
 import { WhyDrawer } from './components/WhyDrawer';
 import { useGatekeeperStore } from './store/useGatekeeperStore';
+import { subscribeApiErrors, type ApiError } from './api/client';
 
 function OwnerPanel(): JSX.Element {
   const { result } = useGatekeeperStore();
@@ -21,18 +22,22 @@ function OwnerPanel(): JSX.Element {
 function App(): JSX.Element {
   const { result, graph, loadBearing, ripple, isLoadingGraph, refreshGraph, runContrast, reset } = useGatekeeperStore();
   const [drawerDecision, setDrawerDecision] = useState<string | null>(null);
+  const recording = new URLSearchParams(window.location.search).get('demo') === '1';
+  const [toast, setToast] = useState<ApiError | null>(null);
+  useEffect(() => subscribeApiErrors((error) => { setToast(error); window.setTimeout(() => setToast(null), 5000); }), []);
   const handleDrawerDecision = useCallback((decision: string): void => setDrawerDecision((current) => current === decision ? null : decision), []);
-  useEffect(() => { void refreshGraph(); void runContrast(); }, [refreshGraph, runContrast]);
+  useEffect(() => { void refreshGraph().catch(() => undefined); void runContrast().catch(() => undefined); }, [refreshGraph, runContrast]);
   return (
-    <div className="app-shell">
-      <TopBar onReset={() => void reset()} />
-      <main className="page">
+    <div className={`app-shell ${recording ? 'recording-shell' : ''}`}>
+      {!recording && <TopBar onReset={() => void reset().catch(() => undefined)} />}
+      <main className={`page ${recording ? 'recording-page' : ''}`}>
+        {recording && <div className="recording-masthead"><span className="brand-mark" aria-hidden="true" /><span>GATEKEEPER</span><span>ADVISORY ONLY</span></div>}
         <section className="hero-intro" id="hero"><div><div className="kicker">a pre-action checkpoint for people + agents</div><h1 className="hero-title">Check the<br /><em>reason</em> before<br />the move.</h1><p className="hero-deck">Gatekeeper walks a decision graph before an action happens. <strong>Live rules inherit their liveness from every premise below them.</strong> If a reason dies, the answer changes — and the path tells you where.</p></div><div className="hero-aside"><div className="aside-label">Synthetic fixture / current thesis</div><p className="aside-copy">A rule that says <span>ESCALATE</span> at hop 1 can become <span>STALE</span> at hop 4. This console makes that quiet failure visible before it becomes muscle memory.</p></div></section>
         <CheckpointConsole />
         <div className="section-grid" id="verdict"><div><VerdictCard result={result} ripple={ripple} onDecisionClick={handleDrawerDecision} /></div><div className="side-stack"><OwnerPanel /><LoadBearingPanel items={loadBearing} /><section className="panel"><div className="panel-header"><div><h2 className="panel-title">What Gatekeeper can claim</h2><p className="panel-description">A bounded read of what is recorded, not an enforcement layer.</p></div></div><div className="panel-body"><div className="verified-line" style={{ marginTop: 0, color: 'var(--accent)' }}><CheckCircle2 size={14} /> every answer carries its path</div><p className="ledger-footnote" style={{ marginTop: 12 }}>The backend will later connect this fixture to FastAPI + FalkorDB. For now, the mock API is stateful and uses the same contract.</p></div></section></div></div>
         <div className="section-rule" id="depth"><span className="section-label">01 / trace deeper</span></div>
         <DepthContrast />
-        <GuidedDemo onDecisionClick={handleDrawerDecision} />
+        {!recording && <GuidedDemo onDecisionClick={handleDrawerDecision} />}
         <div className="section-rule" id="reverse"><span className="section-label">02 / change the record</span></div>
         <ReversePanel graphNodes={graph?.nodes ?? []} />
         <div style={{ marginTop: 18 }}><LedgerPanel refreshKey={ripple} /></div>
@@ -40,9 +45,11 @@ function App(): JSX.Element {
         <GraphExplorer />
         <div className="section-rule" id="agent"><span className="section-label">04 / ask as an agent</span></div>
         <AgentMode onDecisionClick={handleDrawerDecision} />
-        <footer style={{ display: 'flex', justifyContent: 'space-between', gap: 20, marginTop: 42, paddingTop: 17, borderTop: '1px solid var(--line)', color: 'var(--quiet)', fontFamily: 'var(--mono)', fontSize: 9, lineHeight: 1.5, textTransform: 'uppercase' }}><span>Gatekeeper / synthetic demo state</span><span>{isLoadingGraph ? 'syncing graph…' : 'graph ready'} · advisory only</span></footer>
+        {recording && <GuidedDemo onDecisionClick={handleDrawerDecision} recording />}
+        <footer className="advisory-footer"><span>Advisory only. Knows only what is recorded.</span><span>Gatekeeper / {isLoadingGraph ? 'syncing graph…' : 'graph ready'}</span></footer>
       </main>
       <WhyDrawer decision={drawerDecision} onClose={() => setDrawerDecision(null)} />
+      {toast && <div className="api-toast" role="status"><strong>{toast.code}</strong><span>{toast.message}</span><button type="button" onClick={() => setToast(null)} aria-label="Dismiss notification">×</button></div>}
     </div>
   );
 }
