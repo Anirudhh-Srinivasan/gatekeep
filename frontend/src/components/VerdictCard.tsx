@@ -168,12 +168,11 @@ export function VerdictCard({ result, onDecisionClick, ripple }: VerdictCardProp
                         <span className="vertical-edge-label">
                           {edge ? edgeLabel(edge.label ?? edge.type) : 'continues to'}
                         </span>
-                        <span
-                          className={`provenance-pill is-${(edge?.provenance ?? 'SYNTHETIC').toLowerCase()}`}
-                          title={`Provenance: ${edge?.provenance ?? 'SYNTHETIC'}`}
-                        >
-                          {edge?.provenance ?? 'SYNTHETIC'}
-                        </span>
+                        {edge?.provenance && (
+                          <span className={`provenance-pill is-${edge.provenance.toLowerCase()}`} title={`Provenance: ${edge.provenance}`}>
+                            {edge.provenance}
+                          </span>
+                        )}
                       </div>
                     )}
                     {node.type === 'Decision' ? (

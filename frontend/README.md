@@ -1,6 +1,6 @@
 # Gatekeeper frontend
 
-Gatekeeper is a pre-action checkpoint for people and AI agents. It follows recorded decision premises before answering `BLOCK`, `ESCALATE`, `STALE`, `ALLOW`, `UNGOVERNED`, or `UNKNOWN_TARGET`. This frontend is intentionally **synthetic** and runs without a backend: the default mock API is stateful, so reversing `D1` really changes the next deep check from `ESCALATE` to `STALE`.
+Gatekeeper is a pre-action checkpoint for people and AI agents. It follows recorded decision premises before answering `BLOCK`, `ESCALATE`, `STALE`, `ALLOW`, `UNGOVERNED`, or `UNKNOWN_TARGET`. The default mock API is stateful, so reversing `D1` really changes the next deep check from `ESCALATE` to `STALE`; the same UI can run against the live FastAPI/FalkorDB API.
 
 ## Run it
 
@@ -28,7 +28,7 @@ VITE_USE_MOCK=false
 VITE_API_URL=http://localhost:8000
 ```
 
-The UI talks only to `src/api/client.ts`. `src/api/types.ts` is the shared draft contract. The mock implementation lives in `src/api/mockApi.ts`; it is also the fixture used by the Vitest tests.
+The UI talks only to `src/api/client.ts`. `src/api/types.ts` is the shared API contract. The mock implementation lives in `src/api/mockApi.ts`; it is also the fixture used by the Vitest tests.
 
 ## API contract
 
@@ -59,4 +59,4 @@ The mock tests cover the hero depth flip, dry-run affected people, block, ungove
 
 ## Honest boundaries
 
-This is an advisory guardrail, not a firewall. “Used” in the ledger means a decision was retrieved for an answer through Gatekeeper; it does not prove what a person did afterward. The fixture is synthetic and labelled as such throughout the interface. Backend work can replace the API implementation without changing the UI contract.
+This is an advisory guardrail, not a firewall. “Used” in the ledger means a decision was retrieved for an answer through Gatekeeper; it does not prove what a person did afterward. The mock and live adapters implement the same UI contract, and the interface labels graph provenance from the records returned by the selected API.

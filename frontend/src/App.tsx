@@ -13,6 +13,8 @@ import { VerdictCard } from './components/VerdictCard';
 import { WhyDrawer } from './components/WhyDrawer';
 import { useGatekeeperStore } from './store/useGatekeeperStore';
 import { subscribeApiErrors, type ApiError } from './api/client';
+import { apiMode } from './api/client';
+import { dataBadgeForGraph } from './components/dataProvenance';
 
 function OwnerPanel(): JSX.Element {
   const { result } = useGatekeeperStore();
@@ -46,6 +48,9 @@ function App(): JSX.Element {
   const [drawerDecision, setDrawerDecision] = useState<string | null>(null);
   const recording = new URLSearchParams(window.location.search).get('demo') === '1';
   const [toast, setToast] = useState<ApiError | null>(null);
+  const claimCopy = apiMode === 'LIVE'
+    ? 'Verdicts come from a deterministic engine over a FalkorDB graph. Every answer carries its graph path. Advisory only, it only knows what is recorded.'
+    : "It is running on a mock that mirrors the engine's real output.";
 
   useEffect(() => subscribeApiErrors((error) => {
     setToast(error);
@@ -64,7 +69,7 @@ function App(): JSX.Element {
 
   return (
     <div className={`app-shell ${recording ? 'recording-shell' : ''}`}>
-      {!recording && <TopBar onReset={() => void reset().catch(() => undefined)} />}
+      {!recording && <TopBar onReset={() => void reset().catch(() => undefined)} dataBadge={dataBadgeForGraph(graph)} />}
       <main className={`page ${recording ? 'recording-page' : ''}`}>
         {recording && (
           <div className="recording-masthead">
@@ -90,7 +95,7 @@ function App(): JSX.Element {
             </p>
           </div>
           <div className="hero-aside">
-            <div className="aside-label">Synthetic fixture / current thesis</div>
+            <div className="aside-label">{apiMode === 'LIVE' ? 'Live API / current thesis' : 'Synthetic fixture / current thesis'}</div>
             <p className="aside-copy">
               A rule that says <span>ESCALATE</span> at hop 1 can become <span>STALE</span> at hop 4. This console makes that quiet failure visible before it becomes muscle memory.
             </p>
@@ -124,7 +129,7 @@ function App(): JSX.Element {
                   <CheckCircle2 size={14} /> every answer carries its path
                 </div>
                 <p className="ledger-footnote" style={{ marginTop: 12 }}>
-                  The backend will later connect this fixture to FastAPI + FalkorDB. For now, the mock API is stateful and uses the same contract.
+                  {claimCopy}
                 </p>
               </div>
             </section>

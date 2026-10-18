@@ -31,7 +31,10 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
   );
 
   const preview = isPreviewValid && lastReverse && !lastReverse.committed ? lastReverse : null;
-  const committedPeople = lastReverse?.committed ? lastReverse.affected_people.length : null;
+  const committedRows = lastReverse?.committed ? lastReverse.affected_people.length : null;
+  const committedNamedPeople = lastReverse?.committed
+    ? new Set(lastReverse.affected_people.map((person) => person.person.trim()).filter((person) => person && person.toLowerCase() !== 'anonymous')).size
+    : null;
 
   const handleOldChange = (value: string): void => {
     setOld(value);
@@ -93,7 +96,7 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
           </p>
         </div>
         <div className="card-header-action">
-          <a href="#ledger" className="dark-card-link" aria-label="Jump to affected people ledger">
+            <a href="#ledger" className="dark-card-link" aria-label="Jump to affected answers ledger">
             <span>View Ledger</span>
             <ArrowRight size={14} aria-hidden="true" />
           </a>
@@ -192,7 +195,7 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
 
         {/* Right Preview Area: Flips & Affected People before commit */}
         <div className="reverse-preview-col">
-          {!preview && committedPeople === null && (
+           {!preview && committedRows === null && (
             <div className="reverse-empty-state">
               <Users size={24} aria-hidden="true" />
               <p>
@@ -201,14 +204,14 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
             </div>
           )}
 
-          {/* After commit notice: N people were told the old answer */}
-          {committedPeople !== null && (
+           {/* After commit notice: distinguish answer rows from named people */}
+           {committedRows !== null && committedNamedPeople !== null && (
             <div className="commit-complete-banner" role="status">
               <CheckCircle2 size={18} aria-hidden="true" />
               <div>
                 <strong>Reversal Committed Successfully</strong>
                 <p>
-                  {committedPeople} {committedPeople === 1 ? 'person was' : 'people were'} told the old answer.
+                   {committedRows} recorded answer {committedRows === 1 ? 'row is' : 'rows are'} linked to the old decision; {committedNamedPeople} distinct named {committedNamedPeople === 1 ? 'viewer is' : 'viewers are'} represented.
                 </p>
               </div>
             </div>
@@ -247,11 +250,11 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
                 </div>
               )}
 
-              {/* Affected People List */}
+              {/* Affected answer list */}
               <div className="affected-people-section">
                 <h4>
                   <Users size={14} aria-hidden="true" />
-                  <span>People who received the old answer ({preview.affected_people.length})</span>
+                  <span>Recorded answers linked to the old decision ({preview.affected_people.length} rows · {new Set(preview.affected_people.map((person) => person.person.trim()).filter((person) => person && person.toLowerCase() !== 'anonymous')).size} named viewers)</span>
                 </h4>
                 {preview.affected_people.length === 0 ? (
                   <div className="no-affected-message">No recorded answers are linked to this decision.</div>

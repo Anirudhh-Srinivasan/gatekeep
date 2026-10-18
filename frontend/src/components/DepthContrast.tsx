@@ -67,7 +67,7 @@ function DepthSide({ label, depth, result }: DepthSideProps): JSX.Element {
         <div className="contrast-edge-provenance">
           <span className="provenance-label">Path edges:</span>
           <div className="provenance-badges-inline">
-            {Array.from(new Set(result.path.edges.map((e) => e.provenance ?? 'SYNTHETIC'))).map((prov) => (
+            {Array.from(new Set(result.path.edges.flatMap((e) => e.provenance ? [e.provenance] : []))).map((prov) => (
               <span key={prov} className={`provenance-pill is-${prov.toLowerCase()}`}>
                 {prov}
               </span>

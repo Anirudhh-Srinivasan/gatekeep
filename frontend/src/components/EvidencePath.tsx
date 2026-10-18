@@ -44,7 +44,7 @@ export function EvidencePath({ result, onDecisionClick }: EvidencePathProps): JS
             );
             return (
               <motion.div key={node.id} className="evidence-segment" initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * .07 }} style={{ display: 'flex', alignItems: 'center' }}>
-                {index > 0 && <span className="evidence-connector" aria-hidden="true"><small>{result.path.edges.find((edge) => edge.source === nodes[index - 1].id && edge.target === node.id)?.provenance ?? 'SYNTHETIC'}</small></span>}
+                {index > 0 && <span className="evidence-connector" aria-hidden="true">{result.path.edges.find((edge) => edge.source === nodes[index - 1].id && edge.target === node.id)?.provenance && <small>{result.path.edges.find((edge) => edge.source === nodes[index - 1].id && edge.target === node.id)?.provenance}</small>}</span>}
                 {isDecision ? (
                   <button type="button" className={`evidence-node ${status === 'dead' ? 'is-dead' : 'is-live'}`} onClick={() => onDecisionClick(node.id)} aria-label={`Open why for ${node.id}`}>
                     {content}

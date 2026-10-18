@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Clock3, RefreshCw, Users, ShieldAlert, FileText } from 'lucide-react';
 import { api } from '../api/client';
 import type { AffectedResponse } from '../api/types';
@@ -21,6 +21,7 @@ const formatDate = (val: string | number | undefined): string => {
 
 export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
   const [response, setResponse] = useState<AffectedResponse | null>(null);
+  const [showOnlyNamed, setShowOnlyNamed] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +43,13 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
     load();
   }, [refreshKey]);
 
+  const visibleRows = useMemo(() => {
+    const rows = response?.rows ?? [];
+    return showOnlyNamed ? rows.filter((row) => row.person.trim() !== '' && row.person.toLowerCase() !== 'anonymous') : rows;
+  }, [response, showOnlyNamed]);
+  const distinctViewers = new Set(visibleRows.map((row) => row.person.trim()).filter(Boolean)).size;
+  const totalRowCount = response?.rows.length ?? 0;
+
   return (
     <section className="panel ledger-panel dark-rounded-card" id="ledger" aria-labelledby="ledger-title">
       <div className="card-header-row">
@@ -49,14 +57,18 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
           <div className="card-kicker">03 / AFFECTED RECORD</div>
           <h2 id="ledger-title" className="card-main-title">
             <Users size={20} aria-hidden="true" />
-            <span>Ledger of Affected People</span>
+             <span>Ledger of Affected Answers</span>
           </h2>
           <p className="card-deck">
-            When a premise dies, Gatekeeper traces who received verdicts derived from it so teams can review downstream impact. Advisory only.
+             When a premise changes, Gatekeeper traces recorded answers linked to it so teams can review downstream impact. Advisory only.
           </p>
         </div>
-        <div className="card-header-action">
-          <button
+          <div className="card-header-action">
+            <div className="ledger-view-toggle" role="group" aria-label="Ledger row filter">
+              <button type="button" className={showOnlyNamed ? 'is-selected' : ''} aria-pressed={showOnlyNamed} onClick={() => setShowOnlyNamed(true)}>Named viewers</button>
+              <button type="button" className={!showOnlyNamed ? 'is-selected' : ''} aria-pressed={!showOnlyNamed} onClick={() => setShowOnlyNamed(false)}>Show all</button>
+            </div>
+            <button
             type="button"
             className="dark-card-action-btn"
             onClick={load}
@@ -79,29 +91,29 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
               Retry
             </button>
           </div>
-        ) : response?.rows.length === 0 ? (
-          <div className="empty-state">No affected answers are recorded for this decision.</div>
+        ) : visibleRows.length === 0 ? (
+          <div className="empty-state">{totalRowCount === 0 ? 'No affected answers are recorded for this decision.' : `No named viewers are recorded for this decision. ${totalRowCount} total answer ${totalRowCount === 1 ? 'row is' : 'rows are'} hidden by this filter.`}</div>
         ) : (
           <>
             <div className="ledger-stat-bar">
               <span className="ledger-count-pill">
-                <strong>{response?.rows.length ?? 0}</strong> people received answers based on superseded decision {response?.decision ?? 'D1'}
+                <strong>{distinctViewers}</strong> distinct {showOnlyNamed ? 'named ' : ''}{distinctViewers === 1 ? 'viewer' : 'viewers'} represented · {visibleRows.length} recorded answer {visibleRows.length === 1 ? 'row' : 'rows'} shown{showOnlyNamed && totalRowCount !== visibleRows.length ? ` · ${totalRowCount} total rows` : ''}
               </span>
             </div>
 
             <div className="ledger-table-container">
-              <table className="ledger-table" aria-label="Table of affected people and answers">
+              <table className="ledger-table" aria-label="Table of recorded affected answers">
                 <thead>
                   <tr>
                     <th scope="col">Person</th>
                     <th scope="col">Answer / Timestamp</th>
                     <th scope="col">Action Summary</th>
-                    <th scope="col">Stale decision</th>
+                    <th scope="col">Linked decision</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {(response?.rows ?? []).map((row) => (
-                    <tr className="is-stale" key={row.answer_id}>
+                  {visibleRows.map((row) => (
+                    <tr className="is-affected" key={row.answer_id}>
                       <td>
                         <div className="ledger-person-cell">
                           <span className="person-avatar-circle" aria-hidden="true">
@@ -127,7 +139,7 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
                           <code className="decision-code">{row.stale_decision}</code>
                           <span className="stale-status-chip">
                             <Clock3 size={11} aria-hidden="true" />
-                            <span>Now Stale</span>
+                            <span>Recorded link</span>
                           </span>
                         </div>
                       </td>
@@ -160,13 +172,10 @@ export function LedgerPanel({ refreshKey }: LedgerPanelProps): JSX.Element {
                     ))}
                   </div>
                 </div>
-                {/* Provenance Badges & Legend */}
                 <div className="ledger-provenance-bar">
-                  <span className="legend-label">Edge provenance:</span>
+                  <span className="legend-label">Recorded edge provenance:</span>
                   <div className="legend-items">
-                    <span className="provenance-pill is-real">REAL</span>
-                    <span className="provenance-pill is-curated">CURATED</span>
-                    <span className="provenance-pill is-synthetic">SYNTHETIC</span>
+                    {[...new Set(response.path.edges.flatMap((edge) => edge.provenance ? [edge.provenance] : []))].map((provenance) => <span key={provenance} className={`provenance-pill is-${provenance.toLowerCase()}`}>{provenance}</span>)}
                   </div>
                 </div>
               </div>

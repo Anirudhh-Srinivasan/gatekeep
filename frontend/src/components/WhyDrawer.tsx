@@ -41,10 +41,10 @@ export function WhyDrawer({ decision, onClose }: WhyDrawerProps): JSX.Element {
                   {data.sources.map((item) => (
                     <div className="timeline-item" key={item.id}>
                       <span className="timeline-dot" />
-                      <div><div className="timeline-type">{item.type}</div><div className="timeline-title"><a href={item.url} target="_blank" rel="noreferrer">{item.title ?? item.id} <ExternalLink size={11} style={{ verticalAlign: 'middle' }} /></a></div><span className={`source-badge ${item.tag === 'REAL' ? 'is-real' : item.tag === 'CURATED' ? 'is-curated' : ''}`}>{item.tag}</span></div>
+                      <div><div className="timeline-type">{item.type}</div><div className="timeline-title"><a href={item.url} target="_blank" rel="noreferrer">{item.title ?? item.id} <ExternalLink size={11} style={{ verticalAlign: 'middle' }} /></a></div><span className={`source-badge is-${item.tag.toLowerCase()}`}>{item.tag}</span></div>
                     </div>
                   ))}
-                  <div className="timeline-item"><span className="timeline-dot" /><div><div className="timeline-type">decision</div><div className="timeline-title">{data.id} · {data.title}</div><span className="source-badge">SYNTHETIC RECORD</span></div></div>
+                   <div className="timeline-item"><span className="timeline-dot" /><div><div className="timeline-type">decision</div><div className="timeline-title">{data.id} · {data.title}</div><span className="source-badge">RECORDED DECISION</span></div></div>
                   {data.decided_by.map((person) => <div className="timeline-item" key={person}><span className="timeline-dot" /><div><div className="timeline-type">person</div><div className="timeline-title">decided by @{person}</div></div></div>)}
                 </div>
                 <div className="drawer-section"><h3>premises this rule relies on</h3>{data.premises.length === 0 ? <div className="owner-empty">No recorded premises.</div> : data.premises.map((premise) => <div className="premise-chip" key={premise.id}><strong>{premise.id}</strong><span>{premise.status}</span></div>)}</div>

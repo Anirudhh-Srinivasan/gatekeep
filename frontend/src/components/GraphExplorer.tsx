@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react';
 import { Background, Controls, MiniMap, ReactFlow, Handle, Position, type Edge, type Node, type NodeProps } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import type { GraphNode, GraphNodeType } from '../api/types';
+import { apiMode } from '../api/client';
 import { useGatekeeperStore } from '../store/useGatekeeperStore';
+import { layoutGraph } from './graphLayout';
 
 type HighlightableNode = GraphNode & { highlighted?: boolean; dimmed?: boolean } & Record<string, unknown>;
 type FlowNode = Node<HighlightableNode>;
@@ -38,16 +40,17 @@ export function GraphExplorer(): JSX.Element {
   const [activeFilters, setActiveFilters] = useState<GraphNodeType[]>(['Decision', 'Artifact', 'Person', 'Team', 'Doc', 'Ticket', 'Thread', 'Answer']);
   const [hovered, setHovered] = useState<string | null>(null);
   const [selected, setSelected] = useState<GraphNode | null>(null);
+  const layout = useMemo(() => (graph ? layoutGraph(graph) : new Map()), [graph]);
   const nodes = useMemo<FlowNode[]>(() => {
     if (!graph) return [];
     const neighbourIds = hovered ? new Set(graph.edges.flatMap((edge) => edge.source === hovered ? [edge.target] : edge.target === hovered ? [edge.source] : [])) : new Set<string>();
     return graph.nodes.filter((node) => activeFilters.includes(node.type)).map((node) => ({
       id: node.id,
       type: 'graphNode',
-      position: { x: node.x ?? 0, y: node.y ?? 0 },
+      position: layout.get(node.id) ?? { x: 0, y: 0 },
       data: { ...node, highlighted: hovered === node.id, dimmed: Boolean(hovered && hovered !== node.id && !neighbourIds.has(node.id)) },
     }));
-  }, [activeFilters, graph, hovered]);
+  }, [activeFilters, graph, hovered, layout]);
   const edges = useMemo<Edge[]>(() => {
     if (!graph) return [];
     const ids = new Set(nodes.map((node) => node.id));
@@ -66,7 +69,7 @@ export function GraphExplorer(): JSX.Element {
   };
   return (
     <section className="panel" aria-labelledby="graph-title">
-      <div className="panel-header"><div><h2 id="graph-title" className="panel-title">Graph explorer</h2><p className="panel-description">The verdict is a traversal, not a badge. Hover to see neighbours; decisions fade when superseded.</p></div><span className="eyebrow-tag" style={{ padding: '6px 8px' }}>synthetic fixture</span></div>
+      <div className="panel-header"><div><h2 id="graph-title" className="panel-title">Graph explorer</h2><p className="panel-description">The verdict is a traversal, not a badge. Hover to see neighbours; decisions fade when superseded.</p></div><span className="eyebrow-tag" style={{ padding: '6px 8px' }}>{apiMode === 'MOCK' ? 'synthetic fixture' : 'live graph'}</span></div>
       <div className="panel-body"><div className="graph-legend">{filterTypes.map((filter) => <button key={filter.label} type="button" className={`tab-button ${filter.types.every((type) => activeFilters.includes(type)) ? 'is-active' : ''}`} onClick={() => toggleFilter(filter.types)}>{filter.label}</button>)}</div>{isLoadingGraph && <div className="skeleton-block" aria-label="Loading graph" />} {graphError && !isLoadingGraph && <div className="error-state">{graphError}<button className="retry-button" type="button" onClick={() => void refreshGraph().catch(() => undefined)}>Retry</button></div>}{!isLoadingGraph && !graphError && graph && graph.nodes.length === 0 && <div className="empty-state">No graph data is available.</div>}{!isLoadingGraph && !graphError && graph && graph.nodes.length > 0 && <div className="graph-shell"><ReactFlow<FlowNode, Edge> nodes={nodes} edges={edges} nodeTypes={nodeTypes} fitView fitViewOptions={{ padding: .14 }} minZoom={.35} maxZoom={1.4} onNodeMouseEnter={(_, node) => setHovered(node.id)} onNodeMouseLeave={() => setHovered(null)} onNodeClick={(_, node) => setSelected(node.data)} proOptions={{ hideAttribution: true }}><Background color="#26312d" gap={24} size={1} /><Controls showInteractive={false} /><MiniMap nodeColor={(node) => typeColor[(node.data as unknown as HighlightableNode).type]} maskColor="rgba(16,19,19,.78)" /></ReactFlow></div>}{selected && <div className="graph-detail"><strong>{selected.id}</strong> · {selected.type} · {selected.label}{selected.status ? ` · ${selected.status}` : ''}</div>}</div>
     </section>
   );

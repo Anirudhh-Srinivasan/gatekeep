@@ -197,7 +197,23 @@ describe('Phase 3: End-to-end hero flow verification on one MockApi instance', (
     expect(markup).toContain('No pending reversal. Choose a decision and run a dry run');
   });
 
-  it('Render test for the Flip Banner in DepthContrast with fixture results', async () => {
+  it('does not render a flip banner when fresh depth results agree', async () => {
+    const api = new MockApi();
+    const shallowBefore = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 1 });
+    const fullBefore = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 4 });
+
+    expect(shallowBefore.verdict).toBe('ESCALATE');
+    expect(fullBefore.verdict).toBe('ESCALATE');
+    const beforeMarkup = renderToStaticMarkup(
+      <GatekeeperProvider>
+        <DepthContrast testShallow={shallowBefore} testFull={fullBefore} />
+      </GatekeeperProvider>
+    );
+    expect(beforeMarkup).not.toContain('DECISION FLIP DETECTED AT DEPTH');
+
+  });
+
+  it('renders the flip banner after the D1 reversal changes full depth to STALE', async () => {
     const api = new MockApi();
     await api.reverse({ old: 'D1', new_id: 'D4', new_title: 'Drop Windows 7 support', dry_run: false });
     const shallow = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 1 });
