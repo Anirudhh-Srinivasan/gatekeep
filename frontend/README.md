@@ -21,7 +21,8 @@ The **Play demo** control is deterministic and does not use a network or randomn
 
 ## Switching to FastAPI
 
-Copy `.env.example` to `.env.local` and set:
+Set the Vite variables in the shell or copy the public-only
+`frontend/.env.example` to a local, untracked `.env.local` file:
 
 ```bash
 VITE_USE_MOCK=false
@@ -32,7 +33,7 @@ The UI talks only to `src/api/client.ts`. `src/api/types.ts` is the shared API c
 
 ## API contract
 
-The backend should expose these JSON endpoints. Every check/why/reverse/who response carries an evidence `path` with ordered `nodes` and `edges` where applicable.
+The backend exposes these JSON endpoints. Every check/why/reverse/who response carries an evidence `path` with ordered `nodes` and `edges` where applicable.
 
 | Method | Route | Request | Response |
 | --- | --- | --- | --- |

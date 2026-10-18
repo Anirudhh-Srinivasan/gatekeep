@@ -10,8 +10,8 @@
 - **Concurrency.** Read checks were tested with one pooled client, fresh graph wrappers, and 8 concurrent workers. Reversal is a multi-query read/compute/write sequence and needs application-level serialization if concurrent writes are allowed.
 - **PageRank optional.** `load_bearing()` returns an empty list if the deployed FalkorDB build does not expose the verified algorithm.
 - **No LLM.** The engine does not select tools, generate explanations, perform prompt injection defense, or post-check names. Those belong outside this lane.
-- **Provenance fallback.** Missing source/edge provenance is treated as `SYNTHETIC` for backward compatibility. That is a safe label for the prototype, not proof of origin.
+- **Provenance fallback.** Some fixed engine queries use `SYNTHETIC` when an older graph edge has no provenance property. This compatibility fallback is not proof of origin; the frontend avoids presenting missing provenance as observed evidence.
 - **Real-data slice.** The current PEP snapshot is three records with curated notes. The loader is offline and idempotent, but it is not a broad company corpus and does not provide company-team ownership.
-- **Backend agent.** `/ask` has a deterministic router and post-check. An optional LLM path was not implemented in this pass.
+- **Backend agent.** `/ask` has a deterministic router and post-check. It is not an LLM path. The MCP adapter is outside the engine and calls the same `Gatekeeper` API.
 - **HTTP reset/rate limit.** Backend reset protection and rate limiting are simple in-memory, per-process controls.
 - **Reverse lock.** Backend reversal serialization is a lock in one process only; it is not a distributed lock.

@@ -12,3 +12,4 @@ __pycache__
 *.pyc
 .pytest_cache
 .DS_Store
+.codex_progress.md
