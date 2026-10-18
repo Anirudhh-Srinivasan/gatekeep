@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion';
-import { ArrowUpRight, ShieldAlert } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import type { CheckResponse } from '../api/types';
 import { EvidencePath } from './EvidencePath';
 import { verdictClass, verdictPatternClass, verdictReason } from './verdictText';
+import { VerdictMark } from './VerdictMark';
 
 interface VerdictCardProps {
   result: CheckResponse | null;
@@ -11,18 +12,19 @@ interface VerdictCardProps {
 }
 
 export function VerdictCard({ result, onDecisionClick, ripple }: VerdictCardProps): JSX.Element {
+  const reduceMotion = useReducedMotion();
   if (!result) {
     return <section className="panel verdict-panel"><div className="panel-body empty-state">Run a checkpoint to return a verdict and its evidence path. The graph is waiting.</div></section>;
   }
   const owner = result.owner;
   return (
-    <motion.section key={`${result.answer_id}-${ripple}`} className={`panel verdict-panel ${verdictPatternClass(result.verdict)} ${ripple > 0 ? 'ripple-flash' : ''}`} initial={{ opacity: .5, y: 7 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .3 }} aria-live="polite">
+    <motion.section key={`${result.answer_id}-${ripple}`} className={`panel verdict-panel ${verdictPatternClass(result.verdict)} ${ripple > 0 ? 'ripple-flash' : ''}`} initial={{ opacity: .5, y: reduceMotion ? 0 : 7 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? .01 : .3 }} aria-live="polite">
       <div className="panel-body">
         <div className="verdict-header">
-          <div className="verdict-kicker"><span className={`verdict-signal ${verdictClass(result.verdict)}`} /><ShieldAlert size={14} aria-hidden="true" /> recorded decision check</div>
+          <div className="verdict-kicker"><span className={`verdict-signal ${verdictClass(result.verdict)}`} /> recorded decision check</div>
           <span className="answer-id">{result.answer_id}</span>
         </div>
-        <motion.div key={result.verdict} className={`verdict-word ${verdictClass(result.verdict)}`} initial={{ opacity: 0, scale: .96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .25 }}>{result.verdict}</motion.div>
+        <div className={`verdict-heading verdict-border-${result.verdict.toLowerCase()}`}><VerdictMark verdict={result.verdict} /><motion.div key={result.verdict} className={`verdict-word ${verdictClass(result.verdict)}`} initial={{ opacity: 0, scale: reduceMotion ? 1 : .96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: reduceMotion ? .01 : .25 }}>{result.verdict}</motion.div></div>
         <p className="verdict-reason">{verdictReason(result)}</p>
         <p className="verdict-note">{result.note}</p>
         <div className="verdict-meta">

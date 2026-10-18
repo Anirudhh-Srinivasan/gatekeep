@@ -1,0 +1,43 @@
+:root {
+  --orange: #FF6D29;
+  --brown: #453027;
+  --ink: #161316;
+  --grey: #BABABA;
+  --white: #FFFFFF;
+
+  --font-sans: "Neue Montreal", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --radius-card: 24px;
+  --radius-pill: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --glass-fill: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.18);
+
+  --verdict-red: #FF7770;
+  --verdict-amber: #F3C969;
+  --verdict-green: #7EC99A;
+  --verdict-neutral: #BABABA;
+
+  /* Compatibility aliases used by existing component styles. */
+  --ink-2: #211b20;
+  --panel: rgba(255, 255, 255, 0.07);
+  --panel-raised: rgba(255, 255, 255, 0.10);
+  --line: rgba(255, 255, 255, 0.14);
+  --line-strong: var(--glass-border);
+  --paper: var(--white);
+  --muted: var(--grey);
+  --quiet: var(--grey);
+  --accent: var(--orange);
+  --block: var(--verdict-red);
+  --escalate: var(--orange);
+  --stale: var(--verdict-amber);
+  --allow: var(--verdict-green);
+  --unknown: var(--verdict-neutral);
+  --display: var(--font-sans);
+  --mono: var(--font-sans);
+}

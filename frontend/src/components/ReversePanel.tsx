@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowRight, GitBranch, Hash, Type, RotateCcw } from 'lucide-react';
 import type { GraphNode } from '../api/types';
 import { useGatekeeperStore } from '../store/useGatekeeperStore';
 import { verdictClass } from './verdictText';
@@ -28,9 +28,9 @@ export function ReversePanel({ graphNodes }: ReversePanelProps): JSX.Element {
       <div className="panel-header"><div><h2 id="reverse-title" className="panel-title"><RotateCcw size={15} style={{ verticalAlign: 'text-bottom', marginRight: 7 }} /> Reverse a decision</h2><p className="panel-description">Preview the ripple before you update the record. A commit creates a new live decision and marks the old one superseded.</p></div><span className="eyebrow-tag" style={{ padding: '6px 8px' }}>write path</span></div>
       <div className="panel-body reverse-layout">
         <div className="reverse-form">
-          <label className="field-wrap"><span className="field-label">Decision being replaced</span><select className="field-select" value={old} onChange={(event) => setOld(event.target.value)}>{decisions.map((node) => <option key={node.id} value={node.id}>{node.id} — {node.label}</option>)}</select></label>
-          <label className="field-wrap"><span className="field-label">New decision id</span><input className="field-input" value={newId} onChange={(event) => setNewId(event.target.value)} /></label>
-          <label className="field-wrap"><span className="field-label">New title</span><input className="field-input" value={newTitle} onChange={(event) => setNewTitle(event.target.value)} /></label>
+          <label className="field-wrap"><span className="field-label">Decision being replaced</span><GitBranch className="field-icon-chip" size={15} aria-hidden="true" /><select className="field-select" value={old} onChange={(event) => setOld(event.target.value)}>{decisions.map((node) => <option key={node.id} value={node.id}>{node.id} — {node.label}</option>)}</select></label>
+          <label className="field-wrap"><span className="field-label">New decision id</span><Hash className="field-icon-chip" size={15} aria-hidden="true" /><input className="field-input" aria-label="New decision id" value={newId} onChange={(event) => setNewId(event.target.value)} /></label>
+          <label className="field-wrap"><span className="field-label">New title</span><Type className="field-icon-chip" size={15} aria-hidden="true" /><input className="field-input" aria-label="New title" value={newTitle} onChange={(event) => setNewTitle(event.target.value)} /></label>
           {error && <div className="form-error">{error}</div>}
           <button type="button" className="primary-button" onClick={() => void runDry()} disabled={isChecking}>Dry-run flip preview <ArrowRight size={13} style={{ verticalAlign: 'middle' }} /></button>
         </div>

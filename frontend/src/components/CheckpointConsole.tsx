@@ -55,15 +55,14 @@ export function CheckpointConsole(): JSX.Element {
               aria-label="Target artifact name"
             />
             {focused && suggestions.length > 0 && (
-              <div className="target-suggestions" role="listbox" aria-label="Graph targets">
+              <div className="target-suggestions" role="group" aria-label="Matching graph targets">
                 {suggestions.map((suggestion) => (
                   <button
                     key={suggestion.id}
                     type="button"
                     className="suggestion-button"
                     onMouseDown={() => setTarget(suggestion.id)}
-                    role="option"
-                    aria-selected={suggestion.id === target}
+                    onClick={() => setTarget(suggestion.id)}
                   >
                     <span>{suggestion.id}</span><span className="suggestion-kind">{suggestion.meta}</span>
                   </button>
