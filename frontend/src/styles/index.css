@@ -8,7 +8,7 @@
 }
 
 * { box-sizing: border-box; }
-html { background: var(--ink); scroll-behavior: smooth; }
+html { background-color: var(--ink); color-scheme: dark; overscroll-behavior-y: none; scroll-behavior: smooth; }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 button:focus-visible, input:focus-visible, select:focus-visible, [tabindex='0']:focus-visible {
@@ -322,7 +322,7 @@ a { color: inherit; }
 }
 
 /* Gatekeeper design system */
-html, body { background: var(--ink); color: var(--white); }
+html, body { background-color: var(--ink); color: var(--white); }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--ink); font-family: var(--font-sans);
 
 }
@@ -536,8 +536,8 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse 52rem 38rem at 12% 22%, color-mix(in srgb, var(--orange) 12%, transparent), transparent 72%),
-    radial-gradient(ellipse 54rem 42rem at 82% 8%, color-mix(in srgb, var(--brown) 28%, transparent), transparent 74%);
+  background: radial-gradient(ellipse 28vw 35vh at 20% 50%, color-mix(in srgb, var(--orange) 8%, transparent), transparent 62%),
+    radial-gradient(ellipse 28vw 35vh at 80% 50%, color-mix(in srgb, var(--brown) 14%, transparent), transparent 62%);
   pointer-events: none;
   z-index: 0;
 }
