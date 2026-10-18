@@ -18,6 +18,7 @@ import type {
 
 const apiUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8000';
 const viewer = (import.meta.env.VITE_VIEWER as string | undefined) ?? 'anonymous';
+const resetToken = import.meta.env.VITE_RESET_TOKEN as string | undefined;
 
 export class ApiError extends Error {
   constructor(public readonly code: string, message: string, public readonly status?: number) {
@@ -61,7 +62,10 @@ const httpApi: GatekeeperApi = {
   who: (target) => request<WhoResponse>(`/who/${encodeURIComponent(target)}`),
   loadBearing: (limit = 5) => request<LoadBearingItem[]>(`/load_bearing?limit=${limit}`),
   graph: () => request<GraphResponse>('/graph'),
-  reset: () => request<void>('/reset', { method: 'POST' }),
+  reset: () => request<void>('/reset', {
+    method: 'POST',
+    headers: resetToken ? { 'X-Reset-Token': resetToken } : {},
+  }),
   ask: (question) => request<AskResponse>('/ask', { method: 'POST', body: JSON.stringify({ question }) }),
   targets: () => request<TargetItem[]>('/targets'),
   decisions: () => request<DecisionItem[]>('/decisions'),
