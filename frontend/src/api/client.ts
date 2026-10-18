@@ -14,13 +14,17 @@ import type {
 } from './types';
 
 const apiUrl = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://localhost:8000';
+const viewer = (import.meta.env.VITE_VIEWER as string | undefined) ?? 'anonymous';
 
 const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   const response = await fetch(`${apiUrl}${path}`, {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    headers: { 'Content-Type': 'application/json', 'X-Viewer': viewer, ...(init?.headers ?? {}) },
   });
-  if (!response.ok) throw new Error(`Gatekeeper API returned ${response.status}`);
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { detail?: { code?: string; message?: string } } | null;
+    throw new Error(body?.detail?.message ? `${body.detail.code ?? 'API_ERROR'}: ${body.detail.message}` : `Gatekeeper API returned ${response.status}`);
+  }
   return response.json() as Promise<T>;
 };
 

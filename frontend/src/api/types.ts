@@ -199,6 +199,8 @@ export interface AskResponse {
   result: CheckResponse;
   explanation: string;
   names_verified: boolean;
+  post_check?: { passed: boolean };
+  source?: 'router' | 'llm';
 }
 
 export interface GatekeeperApi {
