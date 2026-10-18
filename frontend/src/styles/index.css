@@ -544,14 +544,35 @@ body {
 body::before {
   content: '';
   position: fixed;
-  top: 15%;
-  left: -12vw;
-  width: 55vw;
-  height: 60vh;
-  background: radial-gradient(circle, rgba(255, 109, 41, 0.18) 0%, rgba(69, 48, 39, 0.35) 45%, transparent 75%);
-  filter: blur(60px);
+  inset: 0;
+  background: radial-gradient(ellipse 52rem 38rem at 12% 22%, color-mix(in srgb, var(--orange) 12%, transparent), transparent 72%),
+    radial-gradient(ellipse 54rem 42rem at 82% 8%, color-mix(in srgb, var(--brown) 28%, transparent), transparent 74%);
   pointer-events: none;
   z-index: 0;
+}
+
+.hero-intro { isolation: auto; scroll-margin-top: 84px; }
+.hero-intro::before { content: none; }
+.topbar {
+  width: min(1200px, calc(100% - 32px)); height: 56px; min-height: 56px;
+  margin: 12px auto 0; padding: 0 18px; border: 1px solid var(--glass-border);
+  border-radius: 999px; background: color-mix(in srgb, var(--ink) 72%, transparent);
+  box-shadow: 0 12px 36px color-mix(in srgb, var(--ink) 38%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(145%); backdrop-filter: blur(22px) saturate(145%);
+}
+.topbar .brand-mark { border-radius: 8px; }
+.status-badge, .data-badge, .reset-button, .kicker, .aside-label, .keyboard-hint { border-radius: 999px; }
+.status-badge, .data-badge { min-height: 32px; padding: 7px 11px; }
+.reset-button { min-height: 36px; padding: 7px 13px; }
+.reset-button:focus-visible, .reset-button:hover { border-color: var(--accent); background: color-mix(in srgb, var(--orange) 12%, transparent); }
+.kicker, .aside-label { display: inline-flex; align-items: center; border: 1px solid color-mix(in srgb, var(--orange) 30%, transparent); padding: 7px 11px; }
+.hero-intro { padding-top: 32px; }
+@media (max-width: 700px) {
+  .topbar { width: calc(100% - 32px); height: 56px; min-height: 56px; gap: 8px; padding: 0 12px; }
+  .brand-sub { display: none; }
+  .topbar-actions { gap: 0; }
+  .reset-button { min-height: 34px; padding: 6px 10px; }
+  .hero-intro { padding-top: 26px; }
 }
 
 /* Screen 1 Stage Grid: Console (Left) + Verdict Card (Right) */
