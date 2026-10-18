@@ -19,6 +19,7 @@ import {
   type PathNode,
   type ReverseRequest,
   type ReverseResponse,
+  type ResetResponse,
   type Source,
   type StaleDecision,
   type Verdict,
@@ -462,9 +463,16 @@ export class MockApi implements GatekeeperApi {
     return Promise.resolve({ nodes, edges: edges.map((edge) => ({ ...edge, provenance: 'SYNTHETIC' as const })) });
   }
 
-  async reset(): Promise<void> {
+  async reset(): Promise<ResetResponse> {
     await wait(70);
     this.seed();
+    const graph = await this.graph();
+    return {
+      reset: true,
+      path: { nodes: [], edges: [] },
+      fixture_counts: { nodes: graph.nodes.length, edges: graph.edges.length },
+      real_counts: null,
+    };
   }
 
   async ask(question: string): Promise<AskResponse> {

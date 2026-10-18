@@ -11,6 +11,7 @@ import type {
   LoadBearingItem,
   ReverseRequest,
   ReverseResponse,
+  ResetResponse,
   TargetItem,
   WhoResponse,
   WhyResponse,
@@ -62,7 +63,7 @@ const httpApi: GatekeeperApi = {
   who: (target) => request<WhoResponse>(`/who/${encodeURIComponent(target)}`),
   loadBearing: (limit = 5) => request<LoadBearingItem[]>(`/load_bearing?limit=${limit}`),
   graph: () => request<GraphResponse>('/graph'),
-  reset: () => request<void>('/reset', {
+  reset: () => request<ResetResponse>('/reset', {
     method: 'POST',
     headers: resetToken ? { 'X-Reset-Token': resetToken } : {},
   }),

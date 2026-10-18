@@ -55,4 +55,14 @@ describe('Gatekeeper stateful mock API', () => {
       ['carol', 'ans-034', 'D2'],
     ]);
   });
+
+  it('Reset: returns the engine response shape and restores the synthetic graph', async () => {
+    const api = new MockApi();
+    await api.reverse({ old: 'D1', new_id: 'D4', new_title: 'Drop Windows 7 support', dry_run: false });
+    const result = await api.reset();
+    expect(result).toMatchObject({ reset: true, path: { nodes: [], edges: [] }, real_counts: null });
+    expect(result.fixture_counts.nodes).toBeGreaterThan(0);
+    expect(result.fixture_counts.edges).toBeGreaterThan(0);
+    expect((await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 6 })).verdict).toBe('ESCALATE');
+  });
 });
