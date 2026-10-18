@@ -118,8 +118,8 @@ npm run dev
 ## Real vs curated vs synthetic
 
 - **Synthetic:** the current fixture, people, decisions, artifacts, sources, answers, governance edges, premise edges, and example outputs.
-- **Curated:** no separate curated corpus has been added in this lane yet. TODO: teammate 2 should label any curated governance links explicitly.
-- **Real:** no real source corpus has been added in this lane yet. TODO: teammate 2 should document attribution and provenance for any public data.
+- **Curated:** three hand-written notes for the three PEP records, marked `CURATED`.
+- **Real:** three PEP records and three source documents from `python/peps`, retrieved over HTTP and stored offline. The source snapshot has not been pinned to a repository commit in this workspace.
 
 ## Limitations
 
@@ -130,7 +130,10 @@ See [`engine/LIMITS.md`](engine/LIMITS.md). The short version: advisory only, re
 These are the checks run in this workspace; update only with results actually rerun:
 
 ```text
-Engine: PYTHONPATH=. .venv/bin/pytest -q — 27 passed (Python 3.11.2, FalkorDB v4.22.1)
+Engine: PYTHONPATH=. .venv/bin/pytest -q — 30 passed (Python 3.11.2, FalkorDB v4.22.1)
+Backend: RESET_TOKEN=test-token PYTHONPATH=.:../engine .venv/bin/pytest -q — 3 passed
+Data: PYTHONPATH=. .venv/bin/pytest ../data/test_loader.py -q — 1 passed
+E2E: RESET_TOKEN=test-token BASE_URL=http://127.0.0.1:8001 backend/.venv/bin/python scripts/e2e_smoke.py — PASS
 Frontend: npm run test — 3 passed
 Frontend: npm run build — passed; Vite emitted a chunk-size warning over 500 kB
 Examples: PYTHONPATH=. .venv/bin/python make_examples.py — passed
@@ -143,16 +146,11 @@ Codex was used to generate the frontend and engine code under the team lead's di
 
 TODO: teammates add any other tools/models used in their lanes and their review notes.
 
-## TODO: data ingestion / teammate 2
+## Data ingestion and backend
 
-- Add public or curated source corpus.
-- Add idempotent ingestion under `data/`.
-- Label REAL/CURATED provenance and document attribution.
-
-## TODO: backend / MCP / agent / teammate 3
-
-- Add FastAPI adapter under `backend/` using [`engine/ENGINE_CONTRACT.md`](engine/ENGINE_CONTRACT.md).
-- Add MCP/tool transport and agent post-check outside the deterministic engine.
+- The bounded PEP snapshot and loader are under [`data/`](data/README.md). It contains three verified records, not a 60–150 record corpus.
+- The FastAPI adapter is under [`backend/`](backend/README.md). `/ask` is deterministic and router-based; no LLM key is required.
+- MCP was not added.
 
 ## TODO: frontend screenshots + demo video / teammate 4
 
