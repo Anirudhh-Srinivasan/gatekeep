@@ -225,6 +225,52 @@ def test_gatekeeper_public_contract_and_validation(graph):
     assert unknown.value.code == "UNKNOWN_TARGET_NAME"
 
 
+def test_reset_without_data_loader_keeps_fixture(graph, monkeypatch):
+    monkeypatch.delenv("GATEKEEPER_DATA_PATH", raising=False)
+    monkeypatch.delenv("GATEKEEPER_LOAD_REAL", raising=False)
+    result = Gatekeeper(graph.client, graph._name).reset(include_real=False)
+    assert result.fixture_counts == {"nodes": 21, "edges": 26}
+    assert result.real_counts is None
+    assert result.info is None
+
+
+def test_reset_loads_fake_real_data_loader(graph, tmp_path, monkeypatch):
+    package = tmp_path / "gatekeeper_data"
+    package.mkdir()
+    (package / "__init__.py").write_text("")
+    (package / "loader.py").write_text(
+        "def load_real_data(graph):\n"
+        "    return {'nodes': 3, 'edges': 4}\n"
+    )
+    monkeypatch.setenv("GATEKEEPER_DATA_PATH", str(tmp_path))
+    monkeypatch.setenv("GATEKEEPER_LOAD_REAL", "1")
+    import sys
+    sys.modules.pop("gatekeeper_data.loader", None)
+    sys.modules.pop("gatekeeper_data", None)
+    result = Gatekeeper(graph.client, graph._name).reset()
+    assert result.real_counts == {"nodes": 3, "edges": 4}
+
+
+def test_reset_loader_failure_restores_clean_fixture(graph, tmp_path, monkeypatch):
+    package = tmp_path / "gatekeeper_data"
+    package.mkdir()
+    (package / "__init__.py").write_text("")
+    (package / "loader.py").write_text(
+        "from gatekeeper_engine.db import query\n"
+        "def load_real_data(graph):\n"
+        "    query(graph, \"CREATE (:Artifact {id: 'partial'})\")\n"
+        "    raise RuntimeError('loader boom')\n"
+    )
+    monkeypatch.setenv("GATEKEEPER_DATA_PATH", str(tmp_path))
+    monkeypatch.setenv("GATEKEEPER_LOAD_REAL", "1")
+    import sys
+    sys.modules.pop("gatekeeper_data.loader", None)
+    sys.modules.pop("gatekeeper_data", None)
+    result = Gatekeeper(graph.client, graph._name).reset()
+    assert result.error == "real-data loader failed: loader boom"
+    assert result.fixture_counts == {"nodes": 21, "edges": 26}
+
+
 def test_shared_client_concurrent_checks_are_isolated(graph):
     api = Gatekeeper(graph.client, graph._name)
     def run(index: int):

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import os
+import importlib
+import sys
+from pathlib import Path
 from typing import Any
 
 from .audit import audit as audit_graph
 from .db import connect, select_graph
-from .fixtures import seed_fixture
+from .fixtures import graph_counts, seed_fixture
 from .models import (
     Action,
     AffectedResponse,
@@ -124,7 +127,40 @@ class Gatekeeper:
     def audit(self) -> AuditReport:
         return audit_graph(self._graph())
 
-    def reset(self) -> ResetResponse:
+    def reset(self, include_real: bool = True) -> ResetResponse:
         graph = self._graph()
         seed_fixture(graph)
-        return ResetResponse(reset=True, path=EvidencePath(nodes=[], edges=[]))
+        fixture_counts = graph_counts(graph)
+        if not include_real or os.getenv("GATEKEEPER_LOAD_REAL", "1") == "0":
+            return ResetResponse(reset=True, path=EvidencePath(nodes=[], edges=[]), fixture_counts=fixture_counts)
+
+        data_path = os.getenv("GATEKEEPER_DATA_PATH")
+        default_path = Path(__file__).resolve().parents[2] / "data"
+        if data_path:
+            if data_path not in sys.path:
+                sys.path.insert(0, data_path)
+        try:
+            if data_path:
+                loader = importlib.import_module("gatekeeper_data.loader")
+            else:
+                loader_file = default_path / "gatekeeper_data" / "loader.py"
+                if not loader_file.is_file():
+                    raise ModuleNotFoundError("gatekeeper_data.loader")
+                spec = importlib.util.spec_from_file_location("gatekeeper_data.loader", loader_file)
+                if spec is None or spec.loader is None:
+                    raise ModuleNotFoundError("gatekeeper_data.loader")
+                loader = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(loader)
+            load_real_data = loader.load_real_data
+        except (ImportError, ModuleNotFoundError, AttributeError):
+            return ResetResponse(reset=True, path=EvidencePath(nodes=[], edges=[]), fixture_counts=fixture_counts,
+                                 info="real-data loader not found; fixture only")
+
+        try:
+            real_counts = load_real_data(graph)
+        except Exception as exc:
+            seed_fixture(graph)
+            return ResetResponse(reset=True, path=EvidencePath(nodes=[], edges=[]), fixture_counts=graph_counts(graph),
+                                 error=f"real-data loader failed: {exc}")
+        return ResetResponse(reset=True, path=EvidencePath(nodes=[], edges=[]), fixture_counts=fixture_counts,
+                             real_counts=real_counts)

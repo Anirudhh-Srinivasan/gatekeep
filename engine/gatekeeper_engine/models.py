@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -279,6 +279,10 @@ class AuditReport(BaseModel):
 class ResetResponse(BaseModel):
     reset: bool
     path: EvidencePath
+    fixture_counts: dict[str, int] = {}
+    real_counts: dict[str, Any] | None = None
+    error: str | None = None
+    info: str | None = None
 
 
 class FaultReport(BaseModel):
