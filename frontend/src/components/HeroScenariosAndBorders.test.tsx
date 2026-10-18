@@ -87,10 +87,6 @@ describe('Phase 3: End-to-end hero flow verification on one MockApi instance', (
     const checkD1_before = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 1 });
     const checkD6_before = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 6 });
 
-    console.log('[E2E 6.a] Depth 1 before reversal verdict:', checkD1_before.verdict);
-    console.log('[E2E 6.a] Depth 1 path nodes:', checkD1_before.path.nodes.map((n) => n.id));
-    console.log('[E2E 6.a] Depth 6 before reversal verdict:', checkD6_before.verdict);
-    console.log('[E2E 6.a] Depth 6 path nodes:', checkD6_before.path.nodes.map((n) => n.id));
 
     expect(checkD1_before.verdict).toBe('ESCALATE');
     expect(checkD6_before.verdict).toBe('ESCALATE');
@@ -104,9 +100,6 @@ describe('Phase 3: End-to-end hero flow verification on one MockApi instance', (
       new_title: 'Drop Windows 7 support',
       dry_run: true,
     });
-    console.log('[E2E 6.b] Dry run committed status:', dryRun.committed);
-    console.log('[E2E 6.b] Dry run affected people:', dryRun.affected_people.map((p) => p.person));
-    console.log('[E2E 6.b] Dry run flips:', dryRun.flips.map((f) => `${f.target} ${f.from_verdict}->${f.to_verdict}`));
 
     expect(dryRun.committed).toBe(false);
     expect(dryRun.affected_people.map((p) => p.person)).toEqual(['alice', 'carol']);
@@ -120,7 +113,6 @@ describe('Phase 3: End-to-end hero flow verification on one MockApi instance', (
 
     // Assert dry run did NOT change later check results
     const checkD6_afterDry = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 6 });
-    console.log('[E2E 6.b] Depth 6 after dry-run verdict (must stay ESCALATE):', checkD6_afterDry.verdict);
     expect(checkD6_afterDry.verdict).toBe('ESCALATE');
 
     // 6.c: reverse committed
@@ -130,18 +122,12 @@ describe('Phase 3: End-to-end hero flow verification on one MockApi instance', (
       new_title: 'Drop Windows 7 support',
       dry_run: false,
     });
-    console.log('[E2E 6.c] Commit result committed status:', commitRes.committed);
     expect(commitRes.committed).toBe(true);
 
     const checkD1_afterCommit = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 1 });
     const checkD4_afterCommit = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 4 });
     const checkD6_afterCommit = await api.check({ target: 'file:compat/win7_shim.js', action: 'delete', depth: 6 });
 
-    console.log('[E2E 6.c] Depth 1 after commit verdict:', checkD1_afterCommit.verdict);
-    console.log('[E2E 6.c] Depth 4 after commit verdict:', checkD4_afterCommit.verdict);
-    console.log('[E2E 6.c] Depth 6 after commit verdict:', checkD6_afterCommit.verdict);
-    console.log('[E2E 6.c] Depth 6 dead premise ID:', checkD6_afterCommit.stale[0]?.dead_premises[0]?.id);
-    console.log('[E2E 6.c] Depth 6 dead premise hops:', checkD6_afterCommit.stale[0]?.dead_premises[0]?.hops);
 
     expect(checkD1_afterCommit.verdict).toBe('ESCALATE');
     expect(checkD4_afterCommit.verdict).toBe('STALE');
@@ -151,25 +137,19 @@ describe('Phase 3: End-to-end hero flow verification on one MockApi instance', (
 
     // 6.d: check(package:moment, add_dependency) is BLOCK
     const blockRes = await api.check({ target: 'package:moment', action: 'add_dependency', depth: 4 });
-    console.log('[E2E 6.d] package:moment add_dependency verdict:', blockRes.verdict);
     expect(blockRes.verdict).toBe('BLOCK');
 
     // check(file:docs/readme.md, delete) is UNGOVERNED with note saying nothing recorded covers it
     const ungovernedRes = await api.check({ target: 'file:docs/readme.md', action: 'delete', depth: 4 });
-    console.log('[E2E 6.d] file:docs/readme.md delete verdict:', ungovernedRes.verdict);
-    console.log('[E2E 6.d] file:docs/readme.md note:', ungovernedRes.note);
     expect(ungovernedRes.verdict).toBe('UNGOVERNED');
     expect(ungovernedRes.note).toContain('Nothing recorded covers this');
 
     // affected(D1) lists alice and carol
     const affectedRes = await api.affected('D1');
-    console.log('[E2E 6.d] affected(D1) people:', affectedRes.rows.map((r) => r.person));
     expect(affectedRes.rows.map((r) => r.person)).toEqual(['alice', 'carol']);
 
     // 6.e: UNKNOWN_TARGET for a nonexistent target
     const unknownRes = await api.check({ target: 'file:missing_fixture.ts', action: 'delete', depth: 6 });
-    console.log('[E2E 6.e] Nonexistent target verdict:', unknownRes.verdict);
-    console.log('[E2E 6.e] Nonexistent target note:', unknownRes.note);
     expect(unknownRes.verdict).toBe('UNKNOWN_TARGET');
     expect(unknownRes.note).toContain('This name does not resolve to a recorded artifact');
   });

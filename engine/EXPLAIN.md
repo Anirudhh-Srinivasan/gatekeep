@@ -530,6 +530,6 @@ ingestion pipeline.
   explaining the API.
 - `reverse()` computes a large read/compare sequence before its optional write.
   The contract therefore says that callers should serialize reversal writes.
-- The public reset method now optionally loads a future data module. If that
+- The public reset method now optionally loads the small offline PEP data module. If that
   loader is absent, reset reports fixture-only information. If it raises, reset
   reseeds the clean fixture and returns an error instead of leaving partial data.
